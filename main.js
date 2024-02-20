@@ -2,6 +2,8 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'lil-gui'
+import Star from './src/Star'
+import System from './src/System'
 
 /**
  * Debug
@@ -16,11 +18,11 @@ const scene = new THREE.Scene()
 /**
  * BOX
  */
-const material = new THREE.MeshNormalMaterial()
-const geometry = new THREE.BoxGeometry(1, 1, 1)
+// const material = new THREE.MeshNormalMaterial()
+// const geometry = new THREE.BoxGeometry(1, 1, 1)
 
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+// const mesh = new THREE.Mesh(geometry, material)
+// scene.add(mesh)
 
 /**
  * render sizes
@@ -34,7 +36,7 @@ const sizes = {
  */
 const fov = 60
 const camera = new THREE.PerspectiveCamera(fov, sizes.width / sizes.height, 0.1)
-camera.position.set(4, 4, 4)
+camera.position.set(25, 25, 25)
 camera.lookAt(new THREE.Vector3(0, 2.5, 0))
 
 /**
@@ -59,10 +61,20 @@ handleResize()
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 
+const light = new THREE.AmbientLight(0xffffff, 1.5)
+const pointLight = new THREE.PointLight(0xffff55, 4.5)
+
+pointLight.position.y = 3
+
+scene.add(light, pointLight)
+
+// system
+const system = new System(scene, camera)
+
 /**
  * Three js Clock
  */
-// const clock = new THREE.Clock()
+const clock = new THREE.Clock()
 
 /**
  * frame loop
@@ -75,9 +87,11 @@ function tic() {
 	/**
 	 * tempo totale trascorso dall'inizio
 	 */
-	// const time = clock.getElapsedTime()
+	const time = clock.getElapsedTime()
 
 	controls.update()
+
+	system.update(time)
 
 	renderer.render(scene, camera)
 
