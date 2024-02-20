@@ -15,7 +15,7 @@ export default class System {
 		this.sun.name = `Sun`
 		this.addUIElement(this.sun)
 
-		for (let i = 0; i < 8; i++) {
+		for (let i = 0; i < 1; i++) {
 			this.addPlanet()
 		}
 	}

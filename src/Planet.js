@@ -26,16 +26,21 @@ export default class Planet extends Mesh {
 	}
 
 	update(time) {
-		time += this.offset
-		time *= 0.1
-		const progress = time % this.orbit.period
+		// time += this.offset
+		// time *= 0.1
+		const progress = (time / this.orbit.period) % 1
+		let angleU = Math.PI * 2 * progress
 
-		const x = this.orbit.a * COS(Math.PI * 2 * progress)
-		const z = this.orbit.b * SIN(Math.PI * 2 * progress)
+		const x = this.orbit.a * COS(angleU)
+		const z = this.orbit.b * SIN(angleU)
 
-		const angle = -Math.atan(x / z) * 2 + Math.PI
+		const angleE = -Math.atan(z / x) * 2
 
-		this.position.x = this.orbit.a * COS(angle) + this.orbit.c
-		this.position.z = this.orbit.b * SIN(angle)
+		console.log(progress, this.orbit.period)
+
+		this.position.x = this.orbit.a * COS(angleE) + this.orbit.c
+		this.position.z = this.orbit.b * SIN(angleE)
+		// this.position.x = this.orbit.a * COS(angleU) + this.orbit.c
+		// this.position.z = this.orbit.b * SIN(angleU)
 	}
 }
