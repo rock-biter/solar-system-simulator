@@ -29,10 +29,13 @@ export default class Planet extends Mesh {
 		time += this.offset
 		time *= 0.1
 		const progress = time % this.orbit.period
-		// this is not mathematically correct
-		let speed = (1 - COS(progress * Math.PI * 2) * 0.5 + 0.5) * 0.1
-		this.position.x =
-			this.orbit.a * COS(Math.PI * 2 * (progress + speed)) + this.orbit.c
-		this.position.z = this.orbit.b * SIN(Math.PI * 2 * (progress + speed))
+
+		const x = this.orbit.a * COS(Math.PI * 2 * progress)
+		const z = this.orbit.b * SIN(Math.PI * 2 * progress)
+
+		const angle = Math.atan(x / z) * 2 - Math.PI
+
+		this.position.x = this.orbit.a * COS(angle) + this.orbit.c
+		this.position.z = this.orbit.b * SIN(angle)
 	}
 }

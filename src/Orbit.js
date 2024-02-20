@@ -9,7 +9,7 @@ import {
 import Planet from './Planet'
 
 export default class Orbit extends Object3D {
-	constructor(a, e = 0.5) {
+	constructor(a, e = 0.8) {
 		super()
 		this.e = e //+ Math.random() * 0.2
 		this.a = a
