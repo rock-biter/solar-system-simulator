@@ -33,7 +33,7 @@ export default class Planet extends Mesh {
 		const x = this.orbit.a * COS(Math.PI * 2 * progress)
 		const z = this.orbit.b * SIN(Math.PI * 2 * progress)
 
-		const angle = Math.atan(x / z) * 2 - Math.PI
+		const angle = -Math.atan(x / z) * 2 + Math.PI
 
 		this.position.x = this.orbit.a * COS(angle) + this.orbit.c
 		this.position.z = this.orbit.b * SIN(angle)
