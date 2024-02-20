@@ -5,7 +5,7 @@ const COS = Math.cos
 const SIN = Math.sin
 
 export default class Planet extends Mesh {
-	constructor(orbit, r = 1) {
+	constructor(orbit, r = 0.3 + Math.random() * 0.5) {
 		const geometry = GEOMETRY
 		const material = new MeshStandardMaterial({
 			flatShading: true,
@@ -22,11 +22,12 @@ export default class Planet extends Mesh {
 			'-' +
 			Math.ceil(Math.random() * 10)
 
+		this.r = r
 		this.scale.setScalar(r)
 	}
 
 	update(time) {
-		// time += this.offset
+		time += this.offset
 		// time *= 0.1
 		const progress = (time / this.orbit.period) % 1
 		let angleU = Math.PI * 2 * progress
@@ -36,7 +37,7 @@ export default class Planet extends Mesh {
 
 		const angleE = -Math.atan(z / x) * 2
 
-		console.log(progress, this.orbit.period)
+		// console.log(progress, this.orbit.period)
 
 		this.position.x = this.orbit.a * COS(angleE) + this.orbit.c
 		this.position.z = this.orbit.b * SIN(angleE)
