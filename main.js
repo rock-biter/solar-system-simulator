@@ -86,7 +86,7 @@ sun.addSystem(solarSystem)
 solarSystem.initUI('#ui-root', true)
 solarSystem.addEntity('planet', false)
 
-camera.worldSpeed = 0.05
+camera.worldSpeed = 0.025
 
 /**
  * Three js Clock

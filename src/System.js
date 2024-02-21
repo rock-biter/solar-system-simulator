@@ -189,10 +189,10 @@ export default class System extends Object3D {
 
 		if (focus === entity) {
 			this.camera.focusBody = null
-			this.camera.worldSpeed = MathUtils.lerp(0.05, 0.001, 0.05)
+			this.camera.worldSpeed = MathUtils.lerp(0.025, 0.001, 0.05)
 			return
 		}
-		this.camera.worldSpeed = MathUtils.lerp(0.001, 0.05, 0.05)
+		this.camera.worldSpeed = MathUtils.lerp(0.001, 0.025, 0.05)
 		this.camera.focusBody = entity
 
 		if (entity) {
