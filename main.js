@@ -2,8 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'lil-gui'
-import Star from './src/Star'
-import System from './src/System'
+import SolarSystem from './src/SolarSystem'
 
 const _V = new THREE.Vector3()
 
@@ -73,7 +72,9 @@ scene.add(light, pointLight)
 scene.background = new THREE.Color(0x111111)
 
 // system
-const system = new System(scene, camera)
+const system = new SolarSystem({ scene, camera })
+// system.initUI('#ui-root', true)
+scene.add(system)
 
 /**
  * Three js Clock

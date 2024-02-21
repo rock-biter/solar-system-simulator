@@ -1,57 +1,103 @@
-import { MathUtils } from 'three'
+import { MathUtils, Mesh, Object3D } from 'three'
 import Orbit from './Orbit'
-import Star from './Star'
+import Planet from './Planet'
+import SolarSystem from './SolarSystem'
 
-export default class System {
+export default class System extends Object3D {
 	speed = 0.05
 	time = 0
+	entities = []
+	head
 
-	constructor(scene, camera) {
-		this.initUI()
+	constructor({ camera, head, orbitGap = 1, orbitStart = 0 }) {
+		super()
 
-		this.sun = new Star()
-		this.entities = [this.sun]
-
-		this.scene = scene
 		this.camera = camera
-		scene.add(this.sun)
+		this.head = head
+		this.head.entities = this.entities
+		this.orbitGap = orbitGap
+		this.orbitStart = head.radius + orbitStart
 
-		this.sun.name = `Sun`
-		this.addUIElement(this.sun)
+		this.add(this.head)
+		this.className = 'system'
 
-		for (let i = 0; i < 1; i++) {
-			this.addPlanet()
-		}
+		// console.log(this)
 	}
 
-	initUI() {
-		this.systemUIList = document.getElementById('system')
-		this.plusButton = document.getElementById('system__plus')
+	addEntity(type) {
+		if (!type) return
 
-		this.plusButton.addEventListener('click', () => {
-			this.addPlanet()
+		console.log('add orbitant entity', type)
+
+		// get last entity
+		const lastEntity = this.entities.at(-1) || this.head
+		const lastOrbit = lastEntity.orbit ? lastEntity.orbit.a : this.orbitStart
+		// create new orbit
+		// console.log(lastOrbit + this.orbitGap)
+		const orbit = new Orbit(this, type, lastOrbit + this.orbitGap)
+		console.log('orbit', this, orbit, lastEntity, lastOrbit, this.orbitGap)
+		const entity = orbit.body
+		entity.prev = lastEntity
+		lastEntity.next = entity
+		// push entity
+		this.entities.push(entity)
+		// add ui button
+		this.addUIElement(entity)
+		// add entity to the scene
+		this.add(orbit)
+	}
+
+	initUI(root, head = false) {
+		if (typeof root === 'string') {
+			this.uiRoot = document.querySelector(`${root}`)
+		} else {
+			this.uiRoot = root
+		}
+
+		this.systemUIList = document.createElement('ul')
+		this.systemUIList.className = this.className
+		this.plusButton = document.createElement('li')
+		this.plusButton.className = 'system__plus'
+		this.plusButton.innerText = '+'
+
+		this.systemUIList.append(this.plusButton)
+
+		this.uiRoot.append(this.systemUIList)
+
+		if (head) {
+			this.addUIElement(this.head)
+		}
+
+		this.plusButton.addEventListener('click', (e) => {
+			e.stopPropagation()
+			this.addEntity(this.entityType)
 		})
 	}
 
-	addUIElement(element) {
+	addUIElement(entity) {
+		// console.log('ui of', entity)
+
 		const item = document.createElement('li')
+		item.innerHTML = `<span class="item__name">${entity.name}</span>`
 		item.className =
 			'system__item cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square h-16 text-white border-white/30 flex items-center justify-center'
 
-		item.innerHTML = element.name
-
-		element.uiButton = item
+		entity.uiButton = item
 
 		item.addEventListener('click', (e) => {
 			e.stopPropagation()
-			console.log(`open edit panel for ${element.name}`)
-			this.setSelected(element)
+			console.log(`open edit panel for ${entity.name}`)
+			this.setSelected(entity)
 		})
+
+		if (typeof entity.initUI === 'function') {
+			entity.initUI(item)
+		}
 
 		this.systemUIList.append(item)
 	}
 
-	setSelected(element) {
+	setSelected(entity) {
 		if (this.selected) {
 			if (this.selected.orbit) {
 				this.selected.orbit.gui.hide()
@@ -59,51 +105,35 @@ export default class System {
 				this.selected.orbit.ellipse.material.opacity = 0.25
 			}
 
-			this.selected.uiButton?.classList?.remove(
-				'bg-indigo-500',
-				'hover:bg-indigo-600'
-			)
-
-			this.selected.uiButton?.classList?.add('hover:bg-white/10')
+			this.selected.uiButton?.classList?.remove('active')
 		}
 
-		if (this.selected === element) {
+		if (this.selected === entity) {
 			this.selected = null
 			this.speed = MathUtils.lerp(0.05, 0.001, 0.05)
 			return
 		}
 		this.speed = MathUtils.lerp(0.001, 0.05, 0.05)
-		this.selected = element
+		this.selected = entity
 
-		if (element) {
-			element.uiButton.classList.add('bg-indigo-500', 'hover:bg-indigo-600')
-			element.uiButton.classList.remove('hover:bg-white/10')
+		if (entity) {
+			entity.uiButton.classList.add('active')
 
-			if (element.orbit) {
-				element.orbit.ellipse.material.color.set(0x5c54f7)
-				element.orbit.ellipse.material.opacity = 1
-				element.orbit?.gui.show()
+			if (entity.orbit) {
+				entity.orbit.ellipse.material.color.set(0x5c54f7)
+				entity.orbit.ellipse.material.opacity = 1
+				entity.orbit?.gui.show()
 			}
 		}
 	}
 
-	addPlanet() {
-		console.log('add planet')
-
-		const last = this.entities.at(-1)
-		const lastOrbit = last.orbit?.a || 0
-		const orbit = new Orbit(7 + lastOrbit)
-		orbit.prev = last
-		last.next = orbit.planet
-		this.entities.push(orbit.planet)
-		this.addUIElement(orbit.planet)
-		this.scene.add(orbit)
-
-		this.setSelected(orbit.planet)
-	}
-
 	update(dt) {
 		this.time += dt * this.speed
+		this.head.update(this.time)
 		this.entities.forEach((el) => el.update(this.time))
+	}
+
+	removeEntity(entity) {
+		// remove from scene and from system
 	}
 }

@@ -7,6 +7,46 @@ body {
 	overflow: hidden;
 }
 
+.planet {
+	@apply relative;
+}
+
+.system {
+	@apply gap-4 flex justify-center;
+}
+
+.system__item {
+	@apply relative;
+}
+
+.system__plus {
+	@apply cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square h-16 text-white border-white/30 flex items-center justify-center order-1;
+}
+
+.system > * {
+	@apply hover:bg-white/10 transition-all;
+}
+
+.system > .active {
+	@apply bg-indigo-500 hover:bg-indigo-600;
+}
+
+.system > * .system {
+	opacity: 0;
+}
+
+.system > :is(.active, :hover) .system {
+	opacity: 1;
+}
+
+.system:has(.active) > *:not(.active, :hover) {
+	filter: blur(5px);
+}
+
+.system--planet {
+	@apply absolute bottom-full pb-4 left-1/2 -translate-x-1/2 w-max;
+}
+
 .lil-gui.root {
 	bottom: 120px;
 	top: auto;

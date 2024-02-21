@@ -3,42 +3,69 @@ import {
 	EllipseCurve,
 	Line,
 	LineDashedMaterial,
-	MeshBasicMaterial,
 	Object3D,
 } from 'three'
 import Planet from './Planet'
 import GUI from 'lil-gui'
+import Moon from './Moon'
 
 export default class Orbit extends Object3D {
-	constructor(a, e = 0.5) {
+	constructor(system, type, a, e = 0.5) {
 		super()
+		this.system = system
 		this.e = e //+ Math.random() * 0.2
 		this.a = a
 		this.c = this.e * this.a
 		this.b = this.a * Math.sqrt(1 - this.e ** 2)
 		this.i = Math.PI * Math.random() * 0.1
 		this.r = 0 //Math.PI * Math.random() * 0.1
+		this.type = type
 
-		this.planet = new Planet(this)
+		this.period = this.a * Math.sqrt(this.a * 0.1)
 
-		this.planet.position.x = this.a + this.c
-		this.add(this.planet)
+		switch (type) {
+			case 'planet':
+				this.createPlanet()
+				break
+			case 'star':
+				// this.createStar()
+				break
+			case 'moon':
+				this.createMoon()
+				break
+			case 'satellite':
+				// this.createSatellite()
+				break
+		}
+
 		this.rotation.order = 'ZYX'
 		this.rotateZ(this.i)
 		this.rotateY(this.r)
 
 		this.addEllipse()
 
-		this.period = this.a * Math.sqrt(this.a * 0.1)
-
 		this.iniGUI()
+	}
+
+	createPlanet() {
+		this.body = new Planet({ orbit: this })
+		console.log('planet', this.body)
+		this.body.position.x = this.a + this.c
+		this.add(this.body)
+	}
+
+	createMoon() {
+		this.body = new Moon({ orbit: this })
+		// console.log(this.body)
+		this.body.position.x = this.a + this.c
+		this.add(this.body)
 	}
 
 	iniGUI() {
 		this.gui = new GUI()
 		this.gui.hide()
 
-		this.gui.title(this.planet.name)
+		this.gui.title(this.body.name)
 
 		this.gui
 			.add(this, 'e', 0, 0.999, 0.01)
@@ -61,23 +88,23 @@ export default class Orbit extends Object3D {
 			.onChange((val) => this.updateRotationY(val))
 
 		this.gui
-			.add(this.planet, 'name')
+			.add(this.body, 'name')
 			.name('Name')
 			.onChange((val) => {
 				this.updateName(val)
 			})
 
 		this.gui
-			.add(this.planet, 'r', 0.1, 3, 0.01)
+			.add(this.body, 'radius', 0.1, 3, 0.01)
 			.name('Radius')
 			.onChange((val) => {
-				this.planet.scale.setScalar(val)
+				this.body.scale.setScalar(val)
 			})
 	}
 
 	updateName(val) {
-		if (this.planet) {
-			this.planet.uiButton.innerHTML = val
+		if (this.body) {
+			this.body.uiButton.querySelector('span').innerText = val
 			this.gui.title(val)
 		}
 	}

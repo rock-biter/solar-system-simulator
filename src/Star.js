@@ -6,13 +6,13 @@ import {
 } from 'three'
 
 export default class Star extends Mesh {
-	constructor(r = 1) {
+	constructor(radius = 1) {
 		const geometry = new IcosahedronGeometry(1, 1)
 		const material = new MeshStandardMaterial({ color: 'yellow' })
 
 		super(geometry, material)
-
-		this.scale.setScalar(r)
+		this.radius = radius
+		this.scale.setScalar(radius)
 	}
 
 	update(time) {}
