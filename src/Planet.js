@@ -28,7 +28,6 @@ export default class Planet extends Mesh {
 
 	update(time) {
 		time += this.offset
-		time *= 0.05
 		const progress = time % this.orbit.period
 		let angleU = Math.PI * 2 * progress
 

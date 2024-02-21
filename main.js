@@ -5,6 +5,8 @@ import * as dat from 'lil-gui'
 import Star from './src/Star'
 import System from './src/System'
 
+const _V = new THREE.Vector3()
+
 /**
  * Debug
  */
@@ -85,24 +87,27 @@ function tic() {
 	/**
 	 * tempo trascorso dal frame precedente
 	 */
-	// const deltaTime = clock.getDelta()
+	const deltaTime = clock.getDelta()
 	/**
 	 * tempo totale trascorso dall'inizio
 	 */
 	const time = clock.getElapsedTime()
 
 	if (system.selected) {
-		controls.target.lerp(system.selected.position, 0.02)
-		controls.object.zoom = THREE.MathUtils.lerp(controls.object.zoom, 2, 0.02)
-		// camera.position.
+		system.selected.getWorldPosition(_V)
+		_V.add(new THREE.Vector3(5, 5, 5))
+		camera.position.lerp(_V, 0.05)
+		controls.target.lerp(system.selected.position, 0.05)
+		controls.object.zoom = THREE.MathUtils.lerp(controls.object.zoom, 2, 0.05)
 	} else {
 		controls.target.lerp(new THREE.Vector3(), 0.02)
 		controls.object.zoom = THREE.MathUtils.lerp(controls.object.zoom, 1, 0.02)
+		camera.position.lerp(new THREE.Vector3(20, 20, 20), 0.02)
 	}
 	controls.object.updateProjectionMatrix()
 	controls.update()
 
-	system.update(time)
+	system.update(deltaTime)
 
 	renderer.render(scene, camera)
 

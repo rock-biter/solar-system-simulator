@@ -125,7 +125,7 @@ export default class Orbit extends Object3D {
 			dashSize: 0.3,
 			gapSize: 0.2,
 			color: 0xffffff,
-			opacity: 0.5,
+			opacity: 0.3,
 			transparent: true,
 		})
 

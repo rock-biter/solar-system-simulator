@@ -1,7 +1,11 @@
+import { MathUtils } from 'three'
 import Orbit from './Orbit'
 import Star from './Star'
 
 export default class System {
+	speed = 0.05
+	time = 0
+
 	constructor(scene, camera) {
 		this.initUI()
 
@@ -52,23 +56,28 @@ export default class System {
 			if (this.selected.orbit) {
 				this.selected.orbit.gui.hide()
 				this.selected.orbit.ellipse.material.color.set(0xffffff)
-				this.selected.orbit.ellipse.material.opacity = 0.5
+				this.selected.orbit.ellipse.material.opacity = 0.25
 			}
 
 			this.selected.uiButton?.classList?.remove(
 				'bg-indigo-500',
 				'hover:bg-indigo-600'
 			)
+
+			this.selected.uiButton?.classList?.add('hover:bg-white/10')
 		}
 
 		if (this.selected === element) {
 			this.selected = null
+			this.speed = MathUtils.lerp(0.05, 0.001, 0.05)
 			return
 		}
+		this.speed = MathUtils.lerp(0.001, 0.05, 0.05)
 		this.selected = element
 
 		if (element) {
 			element.uiButton.classList.add('bg-indigo-500', 'hover:bg-indigo-600')
+			element.uiButton.classList.remove('hover:bg-white/10')
 
 			if (element.orbit) {
 				element.orbit.ellipse.material.color.set(0x5c54f7)
@@ -93,7 +102,8 @@ export default class System {
 		this.setSelected(orbit.planet)
 	}
 
-	update(time) {
-		this.entities.forEach((el) => el.update(time))
+	update(dt) {
+		this.time += dt * this.speed
+		this.entities.forEach((el) => el.update(this.time))
 	}
 }
