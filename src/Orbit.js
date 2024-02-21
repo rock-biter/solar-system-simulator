@@ -51,12 +51,12 @@ export default class Orbit extends Object3D {
 			.onChange((val) => this.updateSemiaxis(val))
 
 		this.gui
-			.add(this, 'i', -Math.PI, Math.PI, 0.01)
+			.add(this, 'i', -Math.PI, Math.PI, 0.001)
 			.name('Rotation Z')
 			.onChange((val) => this.updateRotationZ(val))
 
 		this.gui
-			.add(this, 'r', -Math.PI, Math.PI, 0.01)
+			.add(this, 'r', -Math.PI, Math.PI, 0.001)
 			.name('Rotation Y')
 			.onChange((val) => this.updateRotationY(val))
 
