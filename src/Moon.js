@@ -1,19 +1,22 @@
 import { IcosahedronGeometry, Mesh, MeshStandardMaterial } from 'three'
 import Body from './Body'
 
-const COS = Math.cos
-const SIN = Math.sin
-
 const GEOMETRY = new IcosahedronGeometry(1, 1)
 
 export default class Moon extends Body {
-	constructor({ orbit, radius = 0.1 }) {
+	speed = 2
+
+	constructor({ orbit, radius = 0.1, name = '', system }) {
 		const geometry = GEOMETRY
-		const material = new MeshStandardMaterial({ color: 'white' })
+		const material = new MeshStandardMaterial({
+			color: Math.random() * 0xffffff,
+		})
 
 		const mesh = new Mesh(geometry, material)
-		super(radius)
+		super(name, system)
 
+		this.radius = radius
+		mesh.scale.setScalar(this.radius)
 		this.addOrbit(orbit)
 		this.addMesh(mesh)
 

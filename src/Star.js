@@ -4,16 +4,18 @@ import {
 	MeshBasicMaterial,
 	MeshStandardMaterial,
 } from 'three'
+import Body from './Body'
 
-export default class Star extends Mesh {
-	constructor(radius = 1) {
+export default class Star extends Body {
+	constructor(radius = 1, name = '') {
 		const geometry = new IcosahedronGeometry(1, 1)
-		const material = new MeshStandardMaterial({ color: 'yellow' })
+		const material = new MeshBasicMaterial({ color: 'yellow' })
 
-		super(geometry, material)
+		const mesh = new Mesh(geometry, material)
+		super(name)
+
 		this.radius = radius
-		this.scale.setScalar(radius)
+		mesh.scale.setScalar(this.radius)
+		this.addMesh(mesh)
 	}
-
-	update(time) {}
 }

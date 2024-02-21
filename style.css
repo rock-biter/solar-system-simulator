@@ -16,15 +16,42 @@ body {
 }
 
 .system__item {
-	@apply relative;
+	@apply relative h-16 cursor-pointer hover:bg-white/10 rounded-lg  aspect-square text-white border-white/30 flex items-center justify-center;
 }
 
 .system__plus {
-	@apply cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square h-16 text-white border-white/30 flex items-center justify-center order-1;
+	@apply cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square text-white border-white/30 flex items-center justify-center order-1 h-16;
 }
 
 .system > * {
-	@apply hover:bg-white/10 transition-all;
+	@apply hover:bg-white/10 transition-all relative;
+	background-size: 85%;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.system > * > span {
+	@apply absolute text-xs bottom-0 top-auto translate-y-0 block w-full text-center bg-black/40;
+}
+
+/* .system > .moon > span {
+	@apply bottom-1 top-auto translate-y-0;
+} */
+
+.system > .planet {
+	background-image: url('/planet.png');
+	background-size: 80%;
+}
+
+.system > .star {
+	background-image: url('/sun.png');
+	background-size: 90%;
+}
+
+.system > .moon {
+	background-image: url('/moon.png');
+	background-size: 50%;
+	background-position: center 20%;
 }
 
 .system > .active {
@@ -33,28 +60,36 @@ body {
 
 .system > * .system {
 	opacity: 0;
+	visibility: hidden;
 }
 
 .system > :is(.active, :hover) .system {
 	opacity: 1;
+	visibility: visible;
 }
 
-.system:has(.active) > *:not(.active, :hover) {
+.system:has(.active) {
+	opacity: 1;
+	visibility: visible;
+}
+
+.system:has(> .active) > *:not(.active, :hover) {
 	filter: blur(5px);
 }
 
 .system--planet {
-	@apply absolute bottom-full pb-4 left-1/2 -translate-x-1/2 w-max;
+	@apply absolute flex-col-reverse bottom-full pb-4 left-1/2 -translate-x-1/2 w-max;
 }
 
 .lil-gui.root {
-	bottom: 120px;
-	top: auto;
+	@apply flex top-1/2 -translate-y-1/2 items-center flex-col right-8;
+	/* bottom: 120px; */
+	/* top: auto;
 	display: flex;
 	width: 100%;
-	right: 0;
-	flex-direction: column;
-	align-items: center;
+	right: 0; */
+	/* flex-direction: column;
+	align-items: center; */
 }
 
 .lil-gui.root .title {
@@ -67,11 +102,11 @@ body {
 }
 
 .lil-gui.root .children {
-	@apply bg-gray-950/80 p-3 justify-center rounded-xl gap-3 flex flex-wrap;
+	@apply bg-gray-950/80 p-3 justify-center rounded-xl gap-3 flex flex-col flex-wrap;
 }
 
 .lil-gui.root .children .controller {
-	@apply rounded-lg gap-2 m-0 italic bg-indigo-400/20 h-12 px-2 text-sm text-gray-500;
+	@apply rounded-lg justify-between gap-2 m-0 italic bg-indigo-400/20 h-12 px-2 text-sm text-gray-500;
 }
 
 .lil-gui.root .children .controller > * {
@@ -91,11 +126,11 @@ body {
 	@apply gap-1;
 }
 
-.lil-gui.root .children .controller .slider {
-	width: 70px;
+.lil-gui.root .children .controller :is(.slider, .display) {
+	width: 100px;
 	@apply rounded-md;
 }
 
-.lil-gui.root .children .controller .slider + input {
+.lil-gui.root .children .controller :is(.slider, .display) + input {
 	@apply hidden;
 }

@@ -1,50 +1,114 @@
 import { MathUtils, Mesh, Object3D } from 'three'
 import Orbit from './Orbit'
 import Planet from './Planet'
-import SolarSystem from './SolarSystem'
+import Moon from './Moon'
+import Star from './Star'
 
 export default class System extends Object3D {
-	speed = 0.05
 	time = 0
 	entities = []
-	head
+	headEntity
 
-	constructor({ camera, head, orbitGap = 1, orbitStart = 0 }) {
+	constructor({ camera, orbitGap = 1, orbitStart = 0 }) {
 		super()
 
 		this.camera = camera
-		this.head = head
-		this.head.entities = this.entities
 		this.orbitGap = orbitGap
-		this.orbitStart = head.radius + orbitStart
+		this.orbitStart = orbitStart
 
-		this.add(this.head)
 		this.className = 'system'
-
-		// console.log(this)
 	}
 
-	addEntity(type) {
+	set head(head) {
+		if (head instanceof Star) {
+			this.className += ' system--solar'
+		}
+
+		if (head instanceof Planet) {
+			this.className += ' system--planet'
+		}
+
+		this.headEntity = head
+	}
+
+	get head() {
+		return this.headEntity
+	}
+
+	addEntity(type, select = true) {
 		if (!type) return
 
 		console.log('add orbitant entity', type)
 
+		let entity
+
 		// get last entity
 		const lastEntity = this.entities.at(-1) || this.head
-		const lastOrbit = lastEntity.orbit ? lastEntity.orbit.a : this.orbitStart
-		// create new orbit
-		// console.log(lastOrbit + this.orbitGap)
-		const orbit = new Orbit(this, type, lastOrbit + this.orbitGap)
-		console.log('orbit', this, orbit, lastEntity, lastOrbit, this.orbitGap)
-		const entity = orbit.body
-		entity.prev = lastEntity
-		lastEntity.next = entity
-		// push entity
-		this.entities.push(entity)
-		// add ui button
-		this.addUIElement(entity)
-		// add entity to the scene
+		let lastOrbit
+
+		if (this.entities.length === 0) {
+			lastOrbit = this.orbitStart
+		} else {
+			lastOrbit = this.entities.at(-1).orbit.a
+		}
+
+		const orbit = new Orbit(this, lastOrbit + this.orbitGap)
+		console.log('add entity', this, orbit, lastEntity, lastOrbit, this.orbitGap)
+
+		switch (type) {
+			case 'planet':
+				entity = this.createPlanet(orbit)
+				break
+			case 'star':
+				// this.createStar()
+				break
+			case 'moon':
+				entity = this.createMoon(orbit)
+				break
+			case 'satellite':
+				// this.createSatellite()
+				break
+		}
+
+		this.pushEntity(entity)
 		this.add(orbit)
+
+		select && this.setSelected(entity)
+	}
+
+	pushEntity(entity) {
+		this.entities.push(entity)
+		this.addUIElement(entity)
+
+		if (entity.system) {
+			entity.system.initUI(entity.uiButton)
+		}
+	}
+
+	createPlanet(orbit) {
+		console.log('create planet')
+		const planet = new Planet({ orbit, system: this })
+		const system = new System({
+			camera: this.camera,
+			orbitGap: 1,
+			orbitStart: planet.radius,
+		})
+		planet.addSystem(system)
+
+		console.log('planet system', system)
+
+		planet.position.x = orbit.a + orbit.c
+		planet.iniGUI()
+		return planet
+	}
+
+	createMoon(orbit) {
+		console.log('create moon')
+		const moon = new Moon({ orbit, system: this })
+		moon.position.x = orbit.a + orbit.c
+
+		moon.iniGUI()
+		return moon
 	}
 
 	initUI(root, head = false) {
@@ -70,7 +134,8 @@ export default class System extends Object3D {
 
 		this.plusButton.addEventListener('click', (e) => {
 			e.stopPropagation()
-			this.addEntity(this.entityType)
+			const type = this.head instanceof Star ? 'planet' : 'moon'
+			this.addEntity(type)
 		})
 	}
 
@@ -78,11 +143,23 @@ export default class System extends Object3D {
 		// console.log('ui of', entity)
 
 		const item = document.createElement('li')
+
 		item.innerHTML = `<span class="item__name">${entity.name}</span>`
-		item.className =
-			'system__item cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square h-16 text-white border-white/30 flex items-center justify-center'
+		item.className = 'system__item '
 
 		entity.uiButton = item
+
+		if (entity instanceof Planet) {
+			item.classList.add('planet')
+		}
+
+		if (entity instanceof Star) {
+			item.classList.add('star')
+		}
+
+		if (entity instanceof Moon) {
+			item.classList.add('moon')
+		}
 
 		item.addEventListener('click', (e) => {
 			e.stopPropagation()
@@ -98,23 +175,25 @@ export default class System extends Object3D {
 	}
 
 	setSelected(entity) {
-		if (this.selected) {
-			if (this.selected.orbit) {
-				this.selected.orbit.gui.hide()
-				this.selected.orbit.ellipse.material.color.set(0xffffff)
-				this.selected.orbit.ellipse.material.opacity = 0.25
+		const focus = this.camera.focusBody
+
+		if (focus) {
+			if (focus.orbit) {
+				focus.gui?.hide()
+				focus.orbit.ellipse.material.color.set(0xffffff)
+				focus.orbit.ellipse.material.opacity = 0.25
 			}
 
-			this.selected.uiButton?.classList?.remove('active')
+			focus.uiButton?.classList?.remove('active')
 		}
 
-		if (this.selected === entity) {
-			this.selected = null
-			this.speed = MathUtils.lerp(0.05, 0.001, 0.05)
+		if (focus === entity) {
+			this.camera.focusBody = null
+			this.camera.worldSpeed = MathUtils.lerp(0.05, 0.001, 0.05)
 			return
 		}
-		this.speed = MathUtils.lerp(0.001, 0.05, 0.05)
-		this.selected = entity
+		this.camera.worldSpeed = MathUtils.lerp(0.001, 0.05, 0.05)
+		this.camera.focusBody = entity
 
 		if (entity) {
 			entity.uiButton.classList.add('active')
@@ -122,14 +201,13 @@ export default class System extends Object3D {
 			if (entity.orbit) {
 				entity.orbit.ellipse.material.color.set(0x5c54f7)
 				entity.orbit.ellipse.material.opacity = 1
-				entity.orbit?.gui.show()
+				entity.gui?.show()
 			}
 		}
 	}
 
 	update(dt) {
-		this.time += dt * this.speed
-		this.head.update(this.time)
+		this.time += dt
 		this.entities.forEach((el) => el.update(this.time))
 	}
 

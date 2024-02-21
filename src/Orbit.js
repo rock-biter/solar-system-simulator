@@ -10,7 +10,8 @@ import GUI from 'lil-gui'
 import Moon from './Moon'
 
 export default class Orbit extends Object3D {
-	constructor(system, type, a, e = 0.5) {
+	constructor(system, a, e = 0.15 + Math.random() * 0.2) {
+		console.log('A:', a)
 		super()
 		this.system = system
 		this.e = e //+ Math.random() * 0.2
@@ -19,24 +20,8 @@ export default class Orbit extends Object3D {
 		this.b = this.a * Math.sqrt(1 - this.e ** 2)
 		this.i = Math.PI * Math.random() * 0.1
 		this.r = 0 //Math.PI * Math.random() * 0.1
-		this.type = type
 
 		this.period = this.a * Math.sqrt(this.a * 0.1)
-
-		switch (type) {
-			case 'planet':
-				this.createPlanet()
-				break
-			case 'star':
-				// this.createStar()
-				break
-			case 'moon':
-				this.createMoon()
-				break
-			case 'satellite':
-				// this.createSatellite()
-				break
-		}
 
 		this.rotation.order = 'ZYX'
 		this.rotateZ(this.i)
@@ -44,28 +29,14 @@ export default class Orbit extends Object3D {
 
 		this.addEllipse()
 
-		this.iniGUI()
+		// this.iniGUI()
 	}
 
-	createPlanet() {
-		this.body = new Planet({ orbit: this })
-		console.log('planet', this.body)
-		this.body.position.x = this.a + this.c
-		this.add(this.body)
-	}
+	iniGUI(gui) {
+		this.gui = gui || new GUI()
+		// this.gui.hide()
 
-	createMoon() {
-		this.body = new Moon({ orbit: this })
-		// console.log(this.body)
-		this.body.position.x = this.a + this.c
-		this.add(this.body)
-	}
-
-	iniGUI() {
-		this.gui = new GUI()
-		this.gui.hide()
-
-		this.gui.title(this.body.name)
+		// this.gui.title(this.body.name)
 
 		this.gui
 			.add(this, 'e', 0, 0.999, 0.01)
@@ -73,7 +44,7 @@ export default class Orbit extends Object3D {
 			.onChange((val) => this.updateEccentricity(val))
 
 		this.gui
-			.add(this, 'a', 0, 100, 0.01)
+			.add(this, 'a', 0, 50, 0.01)
 			.name('Semiaxis')
 			.onChange((val) => this.updateSemiaxis(val))
 
@@ -86,27 +57,6 @@ export default class Orbit extends Object3D {
 			.add(this, 'r', -Math.PI, Math.PI, 0.001)
 			.name('Rotation Y')
 			.onChange((val) => this.updateRotationY(val))
-
-		this.gui
-			.add(this.body, 'name')
-			.name('Name')
-			.onChange((val) => {
-				this.updateName(val)
-			})
-
-		this.gui
-			.add(this.body, 'radius', 0.1, 3, 0.01)
-			.name('Radius')
-			.onChange((val) => {
-				this.body.scale.setScalar(val)
-			})
-	}
-
-	updateName(val) {
-		if (this.body) {
-			this.body.uiButton.querySelector('span').innerText = val
-			this.gui.title(val)
-		}
 	}
 
 	updateRotationZ() {

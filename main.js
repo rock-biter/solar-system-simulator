@@ -3,6 +3,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'lil-gui'
 import SolarSystem from './src/SolarSystem'
+import Star from './src/Star'
+import System from './src/System'
 
 const _V = new THREE.Vector3()
 
@@ -44,7 +46,7 @@ camera.lookAt(new THREE.Vector3(0, 2.5, 0))
  * Show the axes of coordinates system
  */
 const axesHelper = new THREE.AxesHelper(3)
-scene.add(axesHelper)
+// scene.add(axesHelper)
 
 /**
  * renderer
@@ -62,19 +64,29 @@ handleResize()
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 
-const light = new THREE.AmbientLight(0xffffff, 1.5)
-const pointLight = new THREE.PointLight(0xffff55, 4.5)
+const light = new THREE.AmbientLight(0xffffff, 1)
+const pointLight = new THREE.PointLight(0xffff55, 10, 100, 0.1)
 
-pointLight.position.y = 3
+pointLight.position.y = 0
 
 scene.add(light, pointLight)
 
 scene.background = new THREE.Color(0x111111)
 
-// system
-const system = new SolarSystem({ scene, camera })
-// system.initUI('#ui-root', true)
-scene.add(system)
+const sun = new Star(2, 'Sole')
+scene.add(sun)
+
+const solarSystem = new System({
+	camera,
+	orbitGap: 5,
+	orbitStart: 8,
+})
+sun.addSystem(solarSystem)
+
+solarSystem.initUI('#ui-root', true)
+solarSystem.addEntity('planet', false)
+
+camera.worldSpeed = 0.05
 
 /**
  * Three js Clock
@@ -94,8 +106,8 @@ function tic() {
 	 */
 	const time = clock.getElapsedTime()
 
-	if (system.selected) {
-		system.selected.getWorldPosition(_V)
+	if (camera.focusBody) {
+		_V.copy(camera.focusBody.getWPosition())
 
 		// camera.position.lerp(_V.clone().add(new THREE.Vector3(5, 5, 5)), 0.08)
 		controls.target.lerp(_V, 0.08)
@@ -108,7 +120,7 @@ function tic() {
 	controls.object.updateProjectionMatrix()
 	controls.update()
 
-	system.update(deltaTime)
+	solarSystem.update(deltaTime * camera.worldSpeed)
 
 	renderer.render(scene, camera)
 
