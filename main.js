@@ -68,6 +68,8 @@ pointLight.position.y = 3
 
 scene.add(light, pointLight)
 
+scene.background = new THREE.Color(0x111111)
+
 // system
 const system = new System(scene, camera)
 
@@ -89,6 +91,15 @@ function tic() {
 	 */
 	const time = clock.getElapsedTime()
 
+	if (system.selected) {
+		controls.target.lerp(system.selected.position, 0.02)
+		controls.object.zoom = THREE.MathUtils.lerp(controls.object.zoom, 2, 0.02)
+		// camera.position.
+	} else {
+		controls.target.lerp(new THREE.Vector3(), 0.02)
+		controls.object.zoom = THREE.MathUtils.lerp(controls.object.zoom, 1, 0.02)
+	}
+	controls.object.updateProjectionMatrix()
 	controls.update()
 
 	system.update(time)
@@ -114,3 +125,7 @@ function handleResize() {
 	const pixelRatio = Math.min(window.devicePixelRatio, 2)
 	renderer.setPixelRatio(pixelRatio)
 }
+
+// renderer.domElement.addEventListener('click', () => {
+// 	system.setSelected()
+// })

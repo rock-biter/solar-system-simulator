@@ -29,7 +29,7 @@ export default class Orbit extends Object3D {
 
 		this.addEllipse()
 
-		this.period = this.a * Math.sqrt(this.a * 1)
+		this.period = this.a * Math.sqrt(this.a * 0.1)
 
 		this.iniGUI()
 	}
@@ -95,6 +95,7 @@ export default class Orbit extends Object3D {
 	}
 
 	updateSemiaxis() {
+		this.period = this.a * Math.sqrt(this.a * 1)
 		this.updateOrbit()
 	}
 
@@ -116,7 +117,7 @@ export default class Orbit extends Object3D {
 			2 * Math.PI
 		)
 
-		const points = curve.getPoints(50)
+		const points = curve.getPoints(100)
 		const geometry = new BufferGeometry().setFromPoints(points)
 		const material = new LineDashedMaterial({
 			linewidth: 1,

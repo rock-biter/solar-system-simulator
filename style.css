@@ -6,3 +6,56 @@ html,
 body {
 	overflow: hidden;
 }
+
+.lil-gui.root {
+	bottom: 120px;
+	top: auto;
+	display: flex;
+	width: 100%;
+	right: 0;
+	flex-direction: column;
+	align-items: center;
+}
+
+.lil-gui.root .title {
+	display: none;
+}
+
+.lil-gui.root .title,
+.lil-gui.root {
+	background: transparent;
+}
+
+.lil-gui.root .children {
+	@apply bg-gray-950/80 p-3 justify-center rounded-xl gap-3 flex flex-wrap;
+}
+
+.lil-gui.root .children .controller {
+	@apply rounded-lg gap-2 m-0 italic bg-indigo-400/20 h-12 px-2 text-sm text-gray-500;
+}
+
+.lil-gui.root .children .controller > * {
+	width: auto;
+	min-width: unset;
+}
+
+.lil-gui.root .children .controller input {
+	@apply text-white;
+}
+
+.lil-gui.root .children .controller .fill {
+	@apply border-indigo-600 bg-indigo-500;
+}
+
+.lil-gui.root .children .controller .widget {
+	@apply gap-1;
+}
+
+.lil-gui.root .children .controller .slider {
+	width: 70px;
+	@apply rounded-md;
+}
+
+.lil-gui.root .children .controller .slider + input {
+	@apply hidden;
+}

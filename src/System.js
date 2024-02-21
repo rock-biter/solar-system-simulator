@@ -38,7 +38,8 @@ export default class System {
 
 		element.uiButton = item
 
-		item.addEventListener('click', () => {
+		item.addEventListener('click', (e) => {
+			e.stopPropagation()
 			console.log(`open edit panel for ${element.name}`)
 			this.setSelected(element)
 		})
@@ -48,23 +49,32 @@ export default class System {
 
 	setSelected(element) {
 		if (this.selected) {
-			this.selected.orbit?.gui.hide()
-			this.selected.orbit.ellipse.material.color.set(0xffffff)
-			this.selected.orbit.ellipse.material.opacity = 0.5
+			if (this.selected.orbit) {
+				this.selected.orbit.gui.hide()
+				this.selected.orbit.ellipse.material.color.set(0xffffff)
+				this.selected.orbit.ellipse.material.opacity = 0.5
+			}
+
 			this.selected.uiButton?.classList?.remove(
 				'bg-indigo-500',
 				'hover:bg-indigo-600'
 			)
 		}
 
+		if (this.selected === element) {
+			this.selected = null
+			return
+		}
 		this.selected = element
 
-		element.uiButton.classList.add('bg-indigo-500', 'hover:bg-indigo-600')
+		if (element) {
+			element.uiButton.classList.add('bg-indigo-500', 'hover:bg-indigo-600')
 
-		if (element.orbit) {
-			element.orbit.ellipse.material.color.set(0x5c54f7)
-			element.orbit.ellipse.material.opacity = 1
-			element.orbit?.gui.show()
+			if (element.orbit) {
+				element.orbit.ellipse.material.color.set(0x5c54f7)
+				element.orbit.ellipse.material.opacity = 1
+				element.orbit?.gui.show()
+			}
 		}
 	}
 
@@ -72,7 +82,8 @@ export default class System {
 		console.log('add planet')
 
 		const last = this.entities.at(-1)
-		const orbit = new Orbit(this.entities.length * 5 + 6)
+		const lastOrbit = last.orbit?.a || 0
+		const orbit = new Orbit(7 + lastOrbit)
 		orbit.prev = last
 		last.next = orbit.planet
 		this.entities.push(orbit.planet)
