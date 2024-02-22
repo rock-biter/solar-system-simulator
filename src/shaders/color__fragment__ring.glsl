@@ -1,6 +1,6 @@
 #include <color_fragment>
 
-float pct = noise(vec2(length(vPosition.xz) * 10.));
+float pct = noise(length(vPosition.xz) * uScale + uOffset);
 // diffuseColor.rgb *= noise(vec2(vPosition.xz )) + 0.25;
 
-diffuseColor.a = step(0.2,pct);
+diffuseColor.a = step(uHeight,pct);

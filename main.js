@@ -121,7 +121,7 @@ for (let i = 0; i < count; i++) {
 
 scene.add(backgroundInstanced)
 
-scene.fog = new THREE.Fog(scene.background, 100, 300)
+scene.fog = new THREE.Fog(scene.background, 120, 300)
 
 /**
  * Three js Clock

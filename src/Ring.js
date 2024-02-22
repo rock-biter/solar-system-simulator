@@ -9,9 +9,22 @@ import {
 } from 'three'
 import colorFragmentRing from './shaders/color__fragment__ring.glsl'
 import projectVertex from './shaders/project__vertex.glsl'
+import common from './shaders/common__ring.glsl'
 const _V = new Vector3()
 
 export default class Ring extends Object3D {
+	uniforms = {
+		uScale: {
+			value: 5,
+		},
+		uOffset: {
+			value: Math.random() * 10,
+		},
+		uHeight: {
+			value: 0.5,
+		},
+	}
+
 	constructor(innerRadius, outerRadius, i = 0, r = 0) {
 		super()
 
@@ -30,14 +43,15 @@ export default class Ring extends Object3D {
 		this.add(this.mesh)
 
 		this.material.onBeforeCompile = (shader) => {
-			console.log(shader.vertexShader)
+			// console.log(shader.vertexShader)
+			shader.uniforms = {
+				...shader.uniforms,
+				...this.uniforms,
+			}
 
 			shader.vertexShader = shader.vertexShader.replace(
 				'#include <common>',
-				`#include <common>
-				varying vec3 vWPosition;
-				varying vec3 vPosition;
-				`
+				common
 			)
 
 			shader.vertexShader = shader.vertexShader.replace(
@@ -47,15 +61,7 @@ export default class Ring extends Object3D {
 
 			shader.fragmentShader = shader.fragmentShader.replace(
 				'#include <common>',
-				`#include <common>
-				varying vec3 vWPosition;
-				varying vec3 vPosition;
-				float noise(vec2 n) {
-	const vec2 d = vec2(0.0, 1.0);
-  vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
-	return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);
-}
-				`
+				common
 			)
 
 			shader.fragmentShader = shader.fragmentShader.replace(
@@ -87,6 +93,16 @@ export default class Ring extends Object3D {
 		if (this.mesh) {
 			this.gui.addColor(this.mesh.material, 'color').name('Color')
 		}
+
+		this.gui.add(this.uniforms.uScale, 'value', 0, 20, 0.01).name('Noise size')
+
+		this.gui
+			.add(this.uniforms.uOffset, 'value', 0, 20, 0.01)
+			.name('Noise Offset')
+
+		this.gui
+			.add(this.uniforms.uHeight, 'value', 0, 1, 0.01)
+			.name('Noise Height')
 
 		this.gui
 			.add(this, 'innerRadius', 0, 5, 0.01)
