@@ -16,7 +16,11 @@ body {
 }
 
 .item__delete {
-	@apply absolute cursor-pointer ml-2 hidden p-2 h-6 rounded-lg items-center justify-center left-full top-0 bg-orange-500 hover:bg-orange-600;
+	@apply absolute cursor-pointer ml-2 hidden p-2 h-6 w-6 rounded-lg items-center justify-center left-full top-0 bg-white/20 hover:bg-orange-500;
+}
+
+.planet > .item__delete {
+	@apply top-full m-0 w-full mt-2 left-0;
 }
 
 .system__item:hover > .item__delete {
