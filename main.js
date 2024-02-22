@@ -4,6 +4,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'lil-gui'
 import Star from './src/Star'
 import System from './src/System'
+import vertexShader from './src/shaders/particles__vertex.glsl'
+import fragmentShader from './src/shaders/particles__fragment.glsl'
 
 const _V = new THREE.Vector3()
 
@@ -64,7 +66,7 @@ const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 
 const light = new THREE.AmbientLight(0xffffff, 1)
-const pointLight = new THREE.PointLight(0xffff55, 10, 100, 0.1)
+const pointLight = new THREE.PointLight(0xffffff, 8, 250, 0.1)
 
 pointLight.position.y = 0
 
@@ -88,16 +90,16 @@ solarSystem.head.initGUI()
 camera.worldSpeed = 0.025
 
 // Ambient
-const geometry = new THREE.IcosahedronGeometry(10, 3)
+const geometry = new THREE.IcosahedronGeometry(10, 1)
 const material = new THREE.MeshStandardMaterial({
-	color: 0x111111,
+	color: 0x201081,
 	flatShading: true,
 })
 const count = 100
 const backgroundInstanced = new THREE.InstancedMesh(geometry, material, count)
 
 // TODO  persin noise movements
-const size = 80
+const size = 60
 const _Q = new THREE.Quaternion()
 const _S = new THREE.Vector3()
 const _M = new THREE.Matrix4()
@@ -108,10 +110,10 @@ for (let i = 0; i < count; i++) {
 		Math.random() * size * Math.sign(Math.random() - 0.5)
 	)
 
-	_S.setScalar(Math.random() * 4)
+	_S.setScalar(Math.random() * 0.5)
 
 	const l = _V.length()
-	_V.normalize().multiplyScalar(l + 175)
+	_V.normalize().multiplyScalar(l + 150)
 
 	_M.compose(_V, _Q, _S)
 
@@ -121,7 +123,40 @@ for (let i = 0; i < count; i++) {
 
 scene.add(backgroundInstanced)
 
-scene.fog = new THREE.Fog(scene.background, 120, 300)
+// universe particles
+const particlesCount = 1000
+const positionArray = new Float32Array(particlesCount * 3)
+const position = new THREE.BufferAttribute(positionArray, 3)
+
+const particleGeometry = new THREE.BufferGeometry()
+for (let i = 0; i < particlesCount; i++) {
+	const x = Math.random() * 500 - 250
+	const y = Math.random() * 500 - 250
+	const z = Math.random() * 500 - 250
+
+	position.setXYZ(i, x, y, z)
+}
+position.needsUpdate = true
+particleGeometry.setAttribute('position', position)
+
+const particlesMaterial = new THREE.ShaderMaterial({
+	vertexColors: true,
+	blending: THREE.AdditiveBlending,
+	transparent: true,
+	depthWrite: false,
+	uniforms: {
+		uTime: {
+			value: 0,
+		},
+	},
+	vertexShader,
+	fragmentShader,
+})
+
+const points = new THREE.Points(particleGeometry, particlesMaterial)
+scene.add(points)
+
+scene.fog = new THREE.Fog(scene.background, 150, 320)
 
 /**
  * Three js Clock
@@ -140,6 +175,8 @@ function tic() {
 	 * tempo totale trascorso dall'inizio
 	 */
 	const time = clock.getElapsedTime()
+
+	particlesMaterial.uniforms.uTime.value = time
 
 	if (camera.focusBody) {
 		_V.copy(camera.focusBody.getWPosition())
