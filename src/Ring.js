@@ -7,6 +7,8 @@ import {
 	RingGeometry,
 	Vector3,
 } from 'three'
+import colorFragmentRing from './shaders/color__fragment__ring.glsl'
+import projectVertex from './shaders/project__vertex.glsl'
 const _V = new Vector3()
 
 export default class Ring extends Object3D {
@@ -21,10 +23,46 @@ export default class Ring extends Object3D {
 		this.material = new MeshStandardMaterial({
 			color: Math.random() * 0xffffff,
 			side: DoubleSide,
+			transparent: true,
 		})
 
 		this.mesh = new Mesh(this.geometry, this.material)
 		this.add(this.mesh)
+
+		this.material.onBeforeCompile = (shader) => {
+			console.log(shader.vertexShader)
+
+			shader.vertexShader = shader.vertexShader.replace(
+				'#include <common>',
+				`#include <common>
+				varying vec3 vWPosition;
+				varying vec3 vPosition;
+				`
+			)
+
+			shader.vertexShader = shader.vertexShader.replace(
+				'#include <project_vertex>',
+				projectVertex
+			)
+
+			shader.fragmentShader = shader.fragmentShader.replace(
+				'#include <common>',
+				`#include <common>
+				varying vec3 vWPosition;
+				varying vec3 vPosition;
+				float noise(vec2 n) {
+	const vec2 d = vec2(0.0, 1.0);
+  vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
+	return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);
+}
+				`
+			)
+
+			shader.fragmentShader = shader.fragmentShader.replace(
+				'#include <color_fragment>',
+				colorFragmentRing
+			)
+		}
 	}
 
 	createRingGeometry(innerRadius, outerRadius) {
