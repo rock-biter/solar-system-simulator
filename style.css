@@ -21,7 +21,13 @@ body {
 
 .system__plus,
 .ring__plus {
-	@apply cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square text-white border-white/30 flex items-center justify-center order-1 h-16;
+	@apply cursor-pointer relative hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square text-white border-white/30 flex items-center justify-center order-1 h-16;
+}
+
+.ring__plus::before,
+.system__plus::before {
+	content: '';
+	@apply inset-0 absolute bg-no-repeat  bg-center opacity-50 grayscale;
 }
 
 .system > * {
@@ -38,6 +44,21 @@ body {
 /* .system > .moon > span {
 	@apply bottom-1 top-auto translate-y-0;
 } */
+
+.system__plus::before {
+	background-image: url('/planet.png');
+	background-size: 80%;
+}
+
+.planet .system__plus::before {
+	background-image: url('/moon.png');
+	background-size: 50%;
+}
+
+.ring__plus::before {
+	background-image: url('/ring.png');
+	background-size: 80%;
+}
 
 .system > .planet {
 	background-image: url('/planet.png');

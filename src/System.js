@@ -142,7 +142,7 @@ export default class System extends Object3D {
 		if (this.head instanceof Planet) {
 			this.plusRingButton = document.createElement('li')
 			this.plusRingButton.className = 'ring__plus'
-			this.plusRingButton.innerText = '+R'
+			this.plusRingButton.innerText = '+'
 
 			this.systemUIList.append(this.plusRingButton)
 
