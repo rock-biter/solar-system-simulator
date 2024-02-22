@@ -110,4 +110,9 @@ export default class Body extends Object3D {
 		this.getWorldPosition(_V)
 		return _V
 	}
+
+	dispose() {
+		// dispose all geometry and material
+		console.log('DISPOSE', this.name)
+	}
 }

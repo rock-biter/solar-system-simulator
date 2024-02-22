@@ -15,6 +15,26 @@ body {
 	@apply gap-4 flex justify-center;
 }
 
+.item__delete {
+	@apply absolute cursor-pointer ml-2 hidden p-2 h-6 rounded-lg items-center justify-center left-full top-0 bg-orange-500 hover:bg-orange-600;
+}
+
+.system__item:hover > .item__delete {
+	@apply flex opacity-30 grayscale;
+}
+
+.system__item.active {
+	@apply z-10;
+}
+
+.system__item.active > .item__delete {
+	@apply flex grayscale-0 opacity-100;
+}
+
+.item__delete span {
+	@apply rotate-45 block;
+}
+
 .system__item {
 	@apply relative h-16 cursor-pointer hover:bg-white/10 rounded-lg  aspect-square text-white border-white/30 flex items-center justify-center;
 }

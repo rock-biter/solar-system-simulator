@@ -98,6 +98,20 @@ export default class System extends Object3D {
 		}
 	}
 
+	deleteEntity(entity) {
+		this.setSelected(entity)
+		const i = this.entities.indexOf(entity)
+		if (i >= 0) this.entities.splice(i)
+
+		if (entity.orbit) {
+			this.remove(entity.orbit)
+		} else {
+			this.remove(entity)
+		}
+
+		entity.dispose()
+	}
+
 	createPlanet(orbit) {
 		console.log('create planet')
 		const planet = new Planet({ orbit, system: this })
@@ -198,6 +212,18 @@ export default class System extends Object3D {
 			this.setSelected(entity)
 		})
 
+		this.eraseButton = document.createElement('div')
+		this.eraseButton.className = 'item__delete'
+		this.eraseButton.innerHTML = '<span>+</span>'
+
+		this.eraseButton.addEventListener('click', (e) => {
+			e.stopPropagation()
+			this.deleteEntity(entity)
+			item.remove()
+		})
+
+		item.append(this.eraseButton)
+
 		if (typeof entity.initUI === 'function') {
 			entity.initUI(item)
 		}
@@ -249,7 +275,7 @@ export default class System extends Object3D {
 		}
 	}
 
-	removeEntity(entity) {
-		// remove from scene and from system
-	}
+	// removeEntity(entity) {
+	// 	// remove from scene and from system
+	// }
 }
