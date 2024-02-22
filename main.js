@@ -87,6 +87,32 @@ solarSystem.addEntity('planet', false)
 solarSystem.head.initGUI()
 camera.worldSpeed = 0.025
 
+// Ambient
+const geometry = new THREE.IcosahedronGeometry(10, 3)
+
+// TODO instanced mesh + persin noise movements
+const size = 80
+for (let i = 0; i < 100; i++) {
+	const material = new THREE.MeshStandardMaterial({
+		color: 0x111111,
+		flatShading: true,
+	})
+	const m = new THREE.Mesh(geometry, material)
+	scene.add(m)
+	const r = Math.random()
+
+	m.position.x = Math.random() * size * Math.sign(Math.random() - 0.5)
+	m.position.y = Math.random() * size * Math.sign(Math.random() - 0.5)
+	m.position.z = Math.random() * size * Math.sign(Math.random() - 0.5)
+
+	const l = m.position.length()
+	m.position.normalize().multiplyScalar(l + 175)
+
+	m.scale.setScalar(Math.random() * 4)
+}
+
+scene.fog = new THREE.Fog(scene.background, 100, 300)
+
 /**
  * Three js Clock
  */
