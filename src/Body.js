@@ -35,8 +35,16 @@ export default class Body extends Object3D {
 		}
 
 		if (this.radius) {
+			let min = 0.1
+			let max = 3
+
+			if (this.type === 'moon') {
+				min = 0.05
+				max = 0.5
+			}
+
 			this.gui
-				.add(this, 'radius', 0.1, 3, 0.01)
+				.add(this, 'radius', min, max, 0.01)
 				.name('Radius')
 				.onChange((val) => {
 					this.updateRadius(val)

@@ -23,7 +23,12 @@ export default class Ring extends Object3D {
 		uHeight: {
 			value: 0.5,
 		},
+		uTime: {
+			value: 0,
+		},
 	}
+
+	type = 'ring'
 
 	constructor(innerRadius, outerRadius, i = 0, r = 0) {
 		super()
@@ -72,7 +77,7 @@ export default class Ring extends Object3D {
 	}
 
 	createRingGeometry(innerRadius, outerRadius) {
-		const geometry = new RingGeometry(innerRadius, outerRadius, 30, 1)
+		const geometry = new RingGeometry(innerRadius, outerRadius, 60, 1)
 		geometry.rotateX(-Math.PI * 0.5)
 		return geometry
 	}
@@ -131,5 +136,8 @@ export default class Ring extends Object3D {
 		return _V
 	}
 
-	update() {}
+	update(time) {
+		// console.log('ring update')
+		this.uniforms.uTime.value = time
+	}
 }

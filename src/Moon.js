@@ -5,11 +5,13 @@ const GEOMETRY = new IcosahedronGeometry(1, 1)
 
 export default class Moon extends Body {
 	speed = 1
+	type = 'moon'
 
 	constructor({ orbit, radius = 0.1, name = '', system }) {
 		const geometry = GEOMETRY
 		const material = new MeshStandardMaterial({
 			color: Math.random() * 0xffffff,
+			flatShading: true,
 		})
 
 		const mesh = new Mesh(geometry, material)

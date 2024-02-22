@@ -70,7 +70,7 @@ body {
 } */
 
 .system__plus::before {
-	background-image: url('/planet.png');
+	background-image: url('/planet-b.png');
 	background-size: 80%;
 }
 
@@ -85,7 +85,7 @@ body {
 }
 
 .system > .planet {
-	background-image: url('/planet.png');
+	background-image: url('/planet-b.png');
 	background-size: 80%;
 }
 
