@@ -212,17 +212,19 @@ export default class System extends Object3D {
 			this.setSelected(entity)
 		})
 
-		this.eraseButton = document.createElement('div')
-		this.eraseButton.className = 'item__delete'
-		this.eraseButton.innerHTML = '<span>+</span>'
+		if (!(entity instanceof Star)) {
+			this.eraseButton = document.createElement('div')
+			this.eraseButton.className = 'item__delete'
+			this.eraseButton.innerHTML = '<span>+</span>'
 
-		this.eraseButton.addEventListener('click', (e) => {
-			e.stopPropagation()
-			this.deleteEntity(entity)
-			item.remove()
-		})
+			this.eraseButton.addEventListener('click', (e) => {
+				e.stopPropagation()
+				this.deleteEntity(entity)
+				item.remove()
+			})
 
-		item.append(this.eraseButton)
+			item.append(this.eraseButton)
+		}
 
 		if (typeof entity.initUI === 'function') {
 			entity.initUI(item)
