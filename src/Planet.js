@@ -4,8 +4,6 @@ import Body from './Body'
 const GEOMETRY = new IcosahedronGeometry(1, 1)
 
 export default class Planet extends Body {
-	speed = 1
-
 	constructor({
 		orbit,
 		radius = 0.3 + Math.random() * 0.5,

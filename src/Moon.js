@@ -4,7 +4,7 @@ import Body from './Body'
 const GEOMETRY = new IcosahedronGeometry(1, 1)
 
 export default class Moon extends Body {
-	speed = 2
+	speed = 1
 
 	constructor({ orbit, radius = 0.1, name = '', system }) {
 		const geometry = GEOMETRY

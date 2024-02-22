@@ -46,10 +46,12 @@ export default class System extends Object3D {
 	addRing(select = true) {
 		let lastOrbit = this.getLastOrbit()
 
-		const ring = new Ring(lastOrbit + this.orbitGap + 3, this.orbitGap * 3)
+		const ring = new Ring(lastOrbit + 0.5, this.orbitGap)
 
 		this.pushEntity(ring)
 		this.add(ring)
+
+		ring.initGUI()
 
 		select && this.setSelected(ring)
 	}
@@ -109,7 +111,7 @@ export default class System extends Object3D {
 		console.log('planet system', system)
 
 		planet.position.x = orbit.a + orbit.c
-		planet.iniGUI()
+		planet.initGUI()
 		return planet
 	}
 
@@ -118,7 +120,7 @@ export default class System extends Object3D {
 		const moon = new Moon({ orbit, system: this })
 		moon.position.x = orbit.a + orbit.c
 
-		moon.iniGUI()
+		moon.initGUI()
 		return moon
 	}
 
@@ -147,6 +149,7 @@ export default class System extends Object3D {
 			this.plusRingButton.addEventListener('click', (e) => {
 				e.stopPropagation()
 				this.addRing()
+				this.plusRingButton.remove()
 			})
 		}
 
@@ -206,8 +209,8 @@ export default class System extends Object3D {
 		const focus = this.camera.focusBody
 
 		if (focus) {
+			focus.gui?.hide()
 			if (focus.orbit) {
-				focus.gui?.hide()
 				focus.orbit.ellipse.material.color.set(0xffffff)
 				focus.orbit.ellipse.material.opacity = 0.25
 			}
@@ -229,14 +232,21 @@ export default class System extends Object3D {
 			if (entity.orbit) {
 				entity.orbit.ellipse.material.color.set(0x5c54f7)
 				entity.orbit.ellipse.material.opacity = 1
-				entity.gui?.show()
 			}
+
+			entity.gui?.show()
 		}
 	}
 
 	update(dt) {
 		this.time += dt
-		this.entities.forEach((el) => el.update(this.time))
+
+		if (!this.head.parentSystem) {
+			// console.log(this.head)
+			this.head.update(this.time)
+		} else {
+			this.entities.forEach((el) => el.update(this.time))
+		}
 	}
 
 	removeEntity(entity) {

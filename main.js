@@ -84,7 +84,7 @@ sun.addSystem(solarSystem)
 
 solarSystem.initUI('#ui-root', true)
 solarSystem.addEntity('planet', false)
-
+solarSystem.head.initGUI()
 camera.worldSpeed = 0.025
 
 /**

@@ -10,6 +10,8 @@ export default class Body extends Object3D {
 	time = 0
 	// mesh of celestial body
 	mesh = null
+	speed = 1
+	spin = 5 + Math.random() * 5
 
 	constructor(name, system = null) {
 		super()
@@ -17,7 +19,7 @@ export default class Body extends Object3D {
 		this.parentSystem = system
 	}
 
-	iniGUI() {
+	initGUI() {
 		this.gui = new GUI()
 		this.gui.hide()
 
@@ -28,6 +30,10 @@ export default class Body extends Object3D {
 				this.updateName(val)
 			})
 
+		if (this.mesh) {
+			this.gui.addColor(this.mesh.material, 'color').name('Color')
+		}
+
 		if (this.radius) {
 			this.gui
 				.add(this, 'radius', 0.1, 3, 0.01)
@@ -37,11 +43,8 @@ export default class Body extends Object3D {
 				})
 		}
 
-		if (this.mesh) {
-			this.gui.addColor(this.mesh.material, 'color').name('Color')
-			// .onChange((val) => {
-			// 	this.updateRadius(val)
-			// })
+		if (this.radius) {
+			this.gui.add(this, 'spin', -50, 50, 0.01).name('Spin')
 		}
 
 		if (this.orbit) {
@@ -80,7 +83,9 @@ export default class Body extends Object3D {
 
 	update(time) {
 		time += this.offset
+		const dt = time - this.time
 		this.time = time * this.speed
+		this.mesh.rotation.y += dt * Math.PI * 2 * this.spin
 		if (this.orbit) {
 			const progress = this.time % this.orbit.period
 			let angleU = Math.PI * 2 * progress
@@ -97,7 +102,7 @@ export default class Body extends Object3D {
 		}
 
 		if (this.system) {
-			this.system.entities.forEach((el) => el.update(this.time))
+			this.system.entities.forEach((el) => el.update(time))
 		}
 	}
 
