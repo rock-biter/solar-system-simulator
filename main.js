@@ -89,27 +89,37 @@ camera.worldSpeed = 0.025
 
 // Ambient
 const geometry = new THREE.IcosahedronGeometry(10, 3)
+const material = new THREE.MeshStandardMaterial({
+	color: 0x111111,
+	flatShading: true,
+})
+const count = 100
+const backgroundInstanced = new THREE.InstancedMesh(geometry, material, count)
 
-// TODO instanced mesh + persin noise movements
+// TODO  persin noise movements
 const size = 80
-for (let i = 0; i < 100; i++) {
-	const material = new THREE.MeshStandardMaterial({
-		color: 0x111111,
-		flatShading: true,
-	})
-	const m = new THREE.Mesh(geometry, material)
-	scene.add(m)
-	const r = Math.random()
+const _Q = new THREE.Quaternion()
+const _S = new THREE.Vector3()
+const _M = new THREE.Matrix4()
+for (let i = 0; i < count; i++) {
+	_V.set(
+		Math.random() * size * Math.sign(Math.random() - 0.5),
+		Math.random() * size * Math.sign(Math.random() - 0.5),
+		Math.random() * size * Math.sign(Math.random() - 0.5)
+	)
 
-	m.position.x = Math.random() * size * Math.sign(Math.random() - 0.5)
-	m.position.y = Math.random() * size * Math.sign(Math.random() - 0.5)
-	m.position.z = Math.random() * size * Math.sign(Math.random() - 0.5)
+	_S.setScalar(Math.random() * 4)
 
-	const l = m.position.length()
-	m.position.normalize().multiplyScalar(l + 175)
+	const l = _V.length()
+	_V.normalize().multiplyScalar(l + 175)
 
-	m.scale.setScalar(Math.random() * 4)
+	_M.compose(_V, _Q, _S)
+
+	// m.scale.setScalar(Math.random() * 4)
+	backgroundInstanced.setMatrixAt(i, _M)
 }
+
+scene.add(backgroundInstanced)
 
 scene.fog = new THREE.Fog(scene.background, 100, 300)
 
