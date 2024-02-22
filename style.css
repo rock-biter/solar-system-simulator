@@ -19,7 +19,8 @@ body {
 	@apply relative h-16 cursor-pointer hover:bg-white/10 rounded-lg  aspect-square text-white border-white/30 flex items-center justify-center;
 }
 
-.system__plus {
+.system__plus,
+.ring__plus {
 	@apply cursor-pointer hover:bg-white/10 rounded-lg border-dashed border-2 aspect-square text-white border-white/30 flex items-center justify-center order-1 h-16;
 }
 
@@ -40,6 +41,11 @@ body {
 
 .system > .planet {
 	background-image: url('/planet.png');
+	background-size: 80%;
+}
+
+.system > .ring {
+	background-image: url('/ring.png');
 	background-size: 80%;
 }
 

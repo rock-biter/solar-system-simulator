@@ -3,6 +3,7 @@ import Orbit from './Orbit'
 import Planet from './Planet'
 import Moon from './Moon'
 import Star from './Star'
+import Ring from './Ring'
 
 export default class System extends Object3D {
 	time = 0
@@ -35,6 +36,24 @@ export default class System extends Object3D {
 		return this.headEntity
 	}
 
+	getLastOrbit() {
+		let last = this.entities.at(-1) || {}
+		let lastOrbit = last.orbit?.a || last.outerRadius || this.orbitStart
+
+		return lastOrbit
+	}
+
+	addRing(select = true) {
+		let lastOrbit = this.getLastOrbit()
+
+		const ring = new Ring(lastOrbit + this.orbitGap + 3, this.orbitGap * 3)
+
+		this.pushEntity(ring)
+		this.add(ring)
+
+		select && this.setSelected(ring)
+	}
+
 	addEntity(type, select = true) {
 		if (!type) return
 
@@ -43,17 +62,9 @@ export default class System extends Object3D {
 		let entity
 
 		// get last entity
-		const lastEntity = this.entities.at(-1) || this.head
-		let lastOrbit
-
-		if (this.entities.length === 0) {
-			lastOrbit = this.orbitStart
-		} else {
-			lastOrbit = this.entities.at(-1).orbit.a
-		}
+		let lastOrbit = this.getLastOrbit()
 
 		const orbit = new Orbit(this, lastOrbit + this.orbitGap)
-		console.log('add entity', this, orbit, lastEntity, lastOrbit, this.orbitGap)
 
 		switch (type) {
 			case 'planet':
@@ -126,6 +137,19 @@ export default class System extends Object3D {
 
 		this.systemUIList.append(this.plusButton)
 
+		if (this.head instanceof Planet) {
+			this.plusRingButton = document.createElement('li')
+			this.plusRingButton.className = 'ring__plus'
+			this.plusRingButton.innerText = '+R'
+
+			this.systemUIList.append(this.plusRingButton)
+
+			this.plusRingButton.addEventListener('click', (e) => {
+				e.stopPropagation()
+				this.addRing()
+			})
+		}
+
 		this.uiRoot.append(this.systemUIList)
 
 		if (head) {
@@ -159,6 +183,10 @@ export default class System extends Object3D {
 
 		if (entity instanceof Moon) {
 			item.classList.add('moon')
+		}
+
+		if (entity instanceof Ring) {
+			item.classList.add('ring')
 		}
 
 		item.addEventListener('click', (e) => {

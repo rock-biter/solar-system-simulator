@@ -2,7 +2,6 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'lil-gui'
-import SolarSystem from './src/SolarSystem'
 import Star from './src/Star'
 import System from './src/System'
 
