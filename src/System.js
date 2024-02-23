@@ -267,10 +267,24 @@ export default class System extends Object3D {
 
 		if (focus === entity) {
 			this.camera.focusBody = null
-			this.camera.worldSpeed = MathUtils.lerp(0.025, 0.001, 0.05)
+			gsap.to(this.camera, { worldSpeed: 0.025, duration: 0.4 })
+			gsap.to(this.camera.position, { x: 0, y: 15, z: 25, duration: 1 })
 			return
 		}
-		this.camera.worldSpeed = MathUtils.lerp(0.001, 0.025, 0.05)
+		gsap.to(this.camera, { worldSpeed: 0.001, duration: 0.4 })
+
+		entity.update(0)
+
+		const pos = entity.getWPosition()
+		if (this.camera.position.clone().sub(pos).length() > 15) {
+			gsap.to(this.camera.position, {
+				x: pos.x,
+				y: pos.y + 5,
+				z: pos.z + 7,
+				duration: 1,
+			})
+		}
+
 		this.camera.focusBody = entity
 
 		if (entity) {
@@ -290,9 +304,9 @@ export default class System extends Object3D {
 
 		if (!this.head.parentSystem) {
 			// console.log(this.head)
-			this.head.update(this.time)
+			this.head.update(dt)
 		} else {
-			this.entities.forEach((el) => el.update(this.time))
+			this.entities.forEach((el) => el.update(dt))
 		}
 	}
 

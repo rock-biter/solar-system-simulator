@@ -8,15 +8,18 @@ const _V = new Vector3()
 export default class Body extends Object3D {
 	offset = Math.random() * 1000
 	time = 0
+	localTime = 0
 	// mesh of celestial body
 	mesh = null
 	speed = 1
 	spin = 5 + Math.random() * 5
+	progress = Math.random()
 
 	constructor(name, system = null) {
 		super()
 		this.name = name
 		this.parentSystem = system
+		this.time = this.offset
 	}
 
 	initGUI() {
@@ -91,14 +94,16 @@ export default class Body extends Object3D {
 		this.mesh.userData.entity = this
 	}
 
-	update(time) {
-		time += this.offset
-		const dt = time - this.time
-		this.time = time * this.speed
+	update(dt) {
+		// time += this.offset
+		// const dt = time - this.time
+		this.time += dt * this.speed
 		this.mesh.rotation.y += dt * Math.PI * 2 * this.spin
+
 		if (this.orbit) {
-			const progress = this.time % this.orbit.period
-			let angleU = Math.PI * 2 * progress
+			const progress = dt % this.orbit.period
+			this.progress += progress
+			let angleU = Math.PI * 2 * this.progress
 
 			const x = this.orbit.a * COS(angleU)
 			const z = this.orbit.b * SIN(angleU)
@@ -112,7 +117,7 @@ export default class Body extends Object3D {
 		}
 
 		if (this.system) {
-			this.system.entities.forEach((el) => el.update(time))
+			this.system.entities.forEach((el) => el.update(dt))
 		}
 	}
 

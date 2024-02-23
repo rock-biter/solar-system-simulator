@@ -4,10 +4,13 @@ import {
 	Line,
 	LineDashedMaterial,
 	Object3D,
+	Vector3,
 } from 'three'
 import Planet from './Planet'
 import GUI from 'lil-gui'
 import Moon from './Moon'
+import gsap from 'gsap'
+import Star from './Star'
 
 export default class Orbit extends Object3D {
 	constructor(system, a, e = 0.15 + Math.random() * 0.2) {
@@ -37,6 +40,7 @@ export default class Orbit extends Object3D {
 		// this.gui.hide()
 
 		// this.gui.title(this.body.name)
+		let maxSemiaxis = this.system.head instanceof Planet ? 6 : 100
 
 		this.gui
 			.add(this, 'e', 0, 0.999, 0.01)
@@ -44,7 +48,7 @@ export default class Orbit extends Object3D {
 			.onChange((val) => this.updateEccentricity(val))
 
 		this.gui
-			.add(this, 'a', 0, 50, 0.01)
+			.add(this, 'a', 0.1, maxSemiaxis, 0.01)
 			.name('Semiaxis')
 			.onChange((val) => this.updateSemiaxis(val))
 
@@ -81,6 +85,32 @@ export default class Orbit extends Object3D {
 		this.b = this.a * Math.sqrt(1 - this.e ** 2)
 
 		this.addEllipse()
+		this.updatePOV()
+	}
+
+	updatePOV() {
+		const camera = this.system.camera
+
+		const pos = this.system.head.getWPosition()
+		if (this.system.head instanceof Star) {
+			pos.x += 0
+			pos.y += 15
+			pos.z += 40
+		} else {
+			pos.x += 0
+			pos.y += 5
+			pos.z += 12
+		}
+
+		gsap.killTweensOf(this.camera)
+		gsap.to(camera.position, {
+			x: pos.x,
+			y: pos.y,
+			z: pos.z,
+			duration: 2,
+		})
+		// gsap.to(this.system.camera.position, { x: 0, y: 15, z: 40, duration: 2 })
+		// console.log(this.system.camera.userData.controls)
 	}
 
 	addEllipse() {

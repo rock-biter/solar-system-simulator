@@ -100,7 +100,7 @@ const sizes = {
  */
 const fov = 60
 const camera = new THREE.PerspectiveCamera(fov, sizes.width / sizes.height, 0.1)
-camera.position.set(25, 25, 25)
+camera.position.set(0, 25, 25)
 camera.lookAt(new THREE.Vector3(0, 2.5, 0))
 
 /**
@@ -124,6 +124,12 @@ handleResize()
  */
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
+camera.userData.controls = controls
+controls.autoRotate = true
+controls.autoRotateSpeed = 0.3
+controls.maxDistance = 200
+controls.minDistance = 10
+controls.enablePan = false
 
 const light = new THREE.AmbientLight(0xffffff, 0.1)
 const pointLight = new THREE.PointLight(0xffffff, 8, 250, 0.1)
@@ -193,19 +199,19 @@ for (let i = 0; i < count; i++) {
 scene.add(backgroundInstanced)
 
 // universe particles
-const particlesCount = 10000
+const particlesCount = 15000
 const positionArray = new Float32Array(particlesCount * 3)
 const position = new THREE.BufferAttribute(positionArray, 3)
 
 const particleGeometry = new THREE.BufferGeometry()
 for (let i = 0; i < particlesCount; i++) {
-	const x = Math.random() * 500 - 250
-	let y = Math.random() * 500 - 250
-	const z = Math.random() * 500 - 250
+	const x = Math.random() * 1000 - 500
+	let y = Math.random() * 1000 - 500
+	const z = Math.random() * 1000 - 500
 
 	if (i < particlesCount * 0.6) {
 		y *= 0.05
-		y += Math.sin(x * 0.01) * 50
+		y += Math.sin(x * 0.01) * 25 + Math.cos(z * 0.01) * 25
 	}
 
 	position.setXYZ(i, x, y, z)
@@ -228,7 +234,7 @@ const particlesMaterial = new THREE.ShaderMaterial({
 })
 
 const points = new THREE.Points(particleGeometry, particlesMaterial)
-// points.rotation.z = Math.PI * 0.37
+points.rotation.z = Math.PI * 0.05
 scene.add(points)
 
 scene.fog = new THREE.Fog(scene.background, 150, 320)

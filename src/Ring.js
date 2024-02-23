@@ -13,6 +13,9 @@ import common from './shaders/common__ring.glsl'
 const _V = new Vector3()
 
 export default class Ring extends Object3D {
+	speed = 1
+	time = 0
+
 	uniforms = {
 		uScale: {
 			value: 5,
@@ -137,9 +140,10 @@ export default class Ring extends Object3D {
 		return _V
 	}
 
-	update(time) {
+	update(dt) {
+		this.time += dt * this.speed
 		// console.log('ring update')
-		this.uniforms.uTime.value = time
+		this.uniforms.uTime.value = this.time
 	}
 
 	dispose() {
