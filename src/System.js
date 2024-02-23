@@ -95,6 +95,16 @@ export default class System extends Object3D {
 
 		if (entity.system) {
 			entity.system.initUI(entity.uiButton)
+
+			let isPlanet = entity instanceof Planet ? true : false
+
+			if (Math.random() < 0.2 && isPlanet) {
+				if (Math.random() < 0.5) {
+					entity.system.addEntity('moon', false)
+				} else {
+					entity.system.addRing(false)
+				}
+			}
 		}
 	}
 
