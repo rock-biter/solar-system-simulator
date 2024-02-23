@@ -140,4 +140,8 @@ export default class Ring extends Object3D {
 		// console.log('ring update')
 		this.uniforms.uTime.value = time
 	}
+
+	dispose() {
+		console.log('dispose ring')
+	}
 }

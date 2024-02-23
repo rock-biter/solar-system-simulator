@@ -9,8 +9,62 @@ import fragmentShader from './src/shaders/particles__fragment.glsl'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import audioSrc from './src/audio/cinematic-universe.mp3'
+import gsap from 'gsap'
 
 const _V = new THREE.Vector3()
+
+let volume = true
+const assets = {
+	planeModel: null,
+	normalMap: null,
+	boatModel: null,
+	soundtrack: null,
+}
+const toggleEl = document.getElementById('sound-toggle')
+const playEl = document.getElementById('play')
+
+const loaderManager = new THREE.LoadingManager()
+
+loaderManager.onLoad = () => {
+	gsap.to([toggleEl, playEl], { autoAlpha: 1, duration: 1 })
+
+	toggleEl.addEventListener('click', () => {
+		volume = !volume
+
+		assets.soundtrack.setVolume(volume ? 0.1 : 0)
+		gsap.to(toggleEl, {
+			opacity: volume ? 1 : 0.4,
+			duration: 0.5,
+		})
+		// gsap.to(assets.soundtrack, { volume: volume ? 0.1 : 0, duration: 1 })
+	})
+
+	playEl.addEventListener('click', () => {
+		assets.soundtrack.play()
+
+		gsap.to(playEl, {
+			autoAlpha: 0,
+			duration: 1,
+			onComplete() {
+				createSystem()
+			},
+		})
+	})
+}
+
+const audioLoader = new THREE.AudioLoader(loaderManager)
+
+audioLoader.load(audioSrc, (buffer) => {
+	const listener = new THREE.AudioListener()
+	const sound = new THREE.Audio(listener)
+	sound.setBuffer(buffer)
+	sound.setLoop(true)
+	sound.setVolume(0.1)
+	assets.soundtrack = sound
+
+	camera.add(listener)
+})
 
 /**
  * Debug
@@ -77,19 +131,26 @@ scene.add(light, pointLight)
 
 scene.background = new THREE.Color(0x111111)
 
-const sun = new Star(2, 'Sole')
-scene.add(sun)
+let solarSystem
 
-const solarSystem = new System({
-	camera,
-	orbitGap: 5,
-	orbitStart: 8,
-})
-sun.addSystem(solarSystem)
+function createSystem() {
+	const sun = new Star(2, 'Sole')
+	scene.add(sun)
 
-solarSystem.initUI('#ui-root', true)
-solarSystem.addEntity('planet', false)
-solarSystem.head.initGUI()
+	solarSystem = new System({
+		camera,
+		orbitGap: 5,
+		orbitStart: 8,
+	})
+	sun.addSystem(solarSystem)
+
+	solarSystem.initUI('#ui-root', true)
+	solarSystem.addEntity('planet', false)
+	solarSystem.head.initGUI()
+}
+
+// createSystem()
+
 camera.worldSpeed = 0.025
 
 // Ambient
@@ -203,7 +264,7 @@ function tic() {
 	controls.object.updateProjectionMatrix()
 	controls.update()
 
-	solarSystem.update(deltaTime * camera.worldSpeed)
+	solarSystem?.update(deltaTime * camera.worldSpeed)
 
 	// renderer.render(scene, camera)
 	effectComposer.render()

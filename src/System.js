@@ -4,6 +4,7 @@ import Planet from './Planet'
 import Moon from './Moon'
 import Star from './Star'
 import Ring from './Ring'
+import gsap from 'gsap'
 
 export default class System extends Object3D {
 	time = 0
@@ -50,6 +51,7 @@ export default class System extends Object3D {
 
 		this.pushEntity(ring)
 		this.add(ring)
+		this.onEnter(ring)
 
 		ring.initGUI()
 
@@ -85,6 +87,8 @@ export default class System extends Object3D {
 
 		this.pushEntity(entity)
 		this.add(orbit)
+		this.onEnter(orbit.ellipse)
+		this.onEnter(entity.mesh, 0.8)
 
 		select && this.setSelected(entity)
 	}
@@ -231,6 +235,10 @@ export default class System extends Object3D {
 				e.stopPropagation()
 				this.deleteEntity(entity)
 				item.remove()
+
+				if (entity instanceof Ring) {
+					this.systemUIList.append(this.plusRingButton)
+				}
 			})
 
 			item.append(this.eraseButton)
@@ -285,6 +293,22 @@ export default class System extends Object3D {
 		} else {
 			this.entities.forEach((el) => el.update(this.time))
 		}
+	}
+
+	onEnter(mesh, delay) {
+		let scale = mesh.scale.x
+		gsap.fromTo(
+			mesh.scale,
+			{ x: 0, y: 0, z: 0 },
+			{
+				x: scale,
+				y: scale,
+				z: scale,
+				duration: 1,
+				delay,
+				ease: 'elastic.out(2.5,2.5)',
+			}
+		)
 	}
 
 	// removeEntity(entity) {
