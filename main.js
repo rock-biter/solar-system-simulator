@@ -6,6 +6,9 @@ import Star from './src/Star'
 import System from './src/System'
 import vertexShader from './src/shaders/particles__vertex.glsl'
 import fragmentShader from './src/shaders/particles__fragment.glsl'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 
 const _V = new THREE.Vector3()
 
@@ -159,6 +162,14 @@ scene.add(points)
 scene.fog = new THREE.Fog(scene.background, 150, 320)
 
 /**
+ * Post processing
+ */
+const effectComposer = new EffectComposer(renderer)
+
+const renderPass = new RenderPass(scene, camera)
+effectComposer.addPass(renderPass)
+
+/**
  * Three js Clock
  */
 const clock = new THREE.Clock()
@@ -194,7 +205,8 @@ function tic() {
 
 	solarSystem.update(deltaTime * camera.worldSpeed)
 
-	renderer.render(scene, camera)
+	// renderer.render(scene, camera)
+	effectComposer.render()
 
 	requestAnimationFrame(tic)
 }
@@ -216,6 +228,20 @@ function handleResize() {
 	renderer.setPixelRatio(pixelRatio)
 }
 
-// renderer.domElement.addEventListener('click', () => {
-// 	system.setSelected()
-// })
+let mouse = new THREE.Vector2()
+
+renderer.domElement.addEventListener('mousedown', (e) => {
+	mouse.x = 2 * (e.clientX / window.innerWidth) - 1
+	mouse.y = -2 * (e.clientY / window.innerHeight) + 1
+})
+
+renderer.domElement.addEventListener('mouseup', (e) => {
+	const x = 2 * (e.clientX / window.innerWidth) - 1
+	const y = -2 * (e.clientY / window.innerHeight) + 1
+	let m = new THREE.Vector2(x, y)
+	const l = m.sub(mouse).length()
+
+	if (l < 0.002) {
+		solarSystem.setSelected(camera.focusBody)
+	}
+})
