@@ -45,6 +45,7 @@ export default class Ring extends Object3D {
 		})
 
 		this.mesh = new Mesh(this.geometry, this.material)
+		this.mesh.userData.entity = this
 		this.add(this.mesh)
 
 		this.material.onBeforeCompile = (shader) => {

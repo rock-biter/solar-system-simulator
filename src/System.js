@@ -95,6 +95,7 @@ export default class System extends Object3D {
 
 	pushEntity(entity) {
 		this.entities.push(entity)
+		this.camera.intersectables.push(entity.mesh)
 		this.addUIElement(entity)
 
 		if (entity.system) {

@@ -87,6 +87,8 @@ export default class Body extends Object3D {
 	addMesh(mesh) {
 		this.add(mesh)
 		this.mesh = mesh
+
+		this.mesh.userData.entity = this
 	}
 
 	update(time) {

@@ -11,6 +11,9 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import audioSrc from './src/audio/cinematic-universe.mp3'
 import gsap from 'gsap'
+import Body from './src/Body'
+
+const reycaster = new THREE.Raycaster()
 
 const _V = new THREE.Vector3()
 
@@ -122,7 +125,7 @@ handleResize()
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 
-const light = new THREE.AmbientLight(0xffffff, 1)
+const light = new THREE.AmbientLight(0xffffff, 0.1)
 const pointLight = new THREE.PointLight(0xffffff, 8, 250, 0.1)
 
 pointLight.position.y = 0
@@ -143,6 +146,7 @@ function createSystem() {
 		orbitStart: 8,
 	})
 	sun.addSystem(solarSystem)
+	camera.intersectables.push(sun)
 
 	solarSystem.initUI('#ui-root', true)
 	solarSystem.addEntity('planet', false)
@@ -152,6 +156,7 @@ function createSystem() {
 // createSystem()
 
 camera.worldSpeed = 0.025
+camera.intersectables = []
 
 // Ambient
 const geometry = new THREE.IcosahedronGeometry(10, 1)
@@ -188,15 +193,20 @@ for (let i = 0; i < count; i++) {
 scene.add(backgroundInstanced)
 
 // universe particles
-const particlesCount = 1000
+const particlesCount = 10000
 const positionArray = new Float32Array(particlesCount * 3)
 const position = new THREE.BufferAttribute(positionArray, 3)
 
 const particleGeometry = new THREE.BufferGeometry()
 for (let i = 0; i < particlesCount; i++) {
 	const x = Math.random() * 500 - 250
-	const y = Math.random() * 500 - 250
+	let y = Math.random() * 500 - 250
 	const z = Math.random() * 500 - 250
+
+	if (i < particlesCount * 0.6) {
+		y *= 0.05
+		y += Math.sin(x * 0.01) * 50
+	}
 
 	position.setXYZ(i, x, y, z)
 }
@@ -218,6 +228,7 @@ const particlesMaterial = new THREE.ShaderMaterial({
 })
 
 const points = new THREE.Points(particleGeometry, particlesMaterial)
+// points.rotation.z = Math.PI * 0.37
 scene.add(points)
 
 scene.fog = new THREE.Fog(scene.background, 150, 320)
@@ -302,7 +313,23 @@ renderer.domElement.addEventListener('mouseup', (e) => {
 	let m = new THREE.Vector2(x, y)
 	const l = m.sub(mouse).length()
 
-	if (l < 0.002) {
-		solarSystem.setSelected(camera.focusBody)
+	reycaster.setFromCamera(mouse, camera)
+
+	console.log(camera.intersectables)
+	let intersect
+	if (camera.intersectables.length) {
+		const intersects = reycaster.intersectObjects(camera.intersectables)
+		console.log(intersects)
+
+		intersect = intersects.find((el) => el.object?.userData?.entity)
+		console.log(intersect)
+	}
+
+	if (intersect) {
+		solarSystem.setSelected(intersect.object.userData?.entity)
+	} else if (l < 0.002) {
+		if (camera.focusBody) {
+			solarSystem.setSelected(camera.focusBody)
+		}
 	}
 })
