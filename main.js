@@ -132,13 +132,15 @@ controls.minDistance = 10
 controls.enablePan = false
 
 const light = new THREE.AmbientLight(0xffffff, 0.1)
-const pointLight = new THREE.PointLight(0xffffff, 8, 250, 0.1)
+const pointLight = new THREE.PointLight(0xffffff, 10, 300, 0.15)
 
 pointLight.position.y = 0
 
 scene.add(light, pointLight)
 
-scene.background = new THREE.Color(0x111111)
+const background = 0x161616
+scene.background = new THREE.Color(background)
+scene.fog = new THREE.Fog(background, 100, 300)
 
 let solarSystem
 
@@ -236,8 +238,6 @@ const particlesMaterial = new THREE.ShaderMaterial({
 const points = new THREE.Points(particleGeometry, particlesMaterial)
 points.rotation.z = Math.PI * 0.05
 scene.add(points)
-
-scene.fog = new THREE.Fog(scene.background, 150, 320)
 
 /**
  * Post processing
