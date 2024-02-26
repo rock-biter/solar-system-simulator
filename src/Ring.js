@@ -3,6 +3,7 @@ import {
 	AdditiveBlending,
 	DoubleSide,
 	Mesh,
+	MeshBasicMaterial,
 	MeshStandardMaterial,
 	Object3D,
 	RingGeometry,
@@ -34,12 +35,7 @@ export default class Ring extends Object3D {
 
 	type = 'ring'
 
-	constructor(
-		innerRadius,
-		outerRadius,
-		i = Math.random() * Math.PI * 0.1,
-		r = 0
-	) {
+	constructor(innerRadius, outerRadius, i = Math.random() * Math.PI, r = 0) {
 		super()
 
 		this.innerRadius = innerRadius
@@ -47,16 +43,19 @@ export default class Ring extends Object3D {
 		this.i = i
 		this.r = r
 		this.geometry = this.createRingGeometry(this.innerRadius, this.outerRadius)
-		this.material = new MeshStandardMaterial({
+		this.material = new MeshBasicMaterial({
 			color: Math.random() * 0xffffff,
 			side: DoubleSide,
 			transparent: true,
+			opacity: 0.6,
 			// blending: AdditiveBlending,
 		})
 
 		this.mesh = new Mesh(this.geometry, this.material)
 		this.mesh.userData.entity = this
 		this.add(this.mesh)
+
+		this.mesh.rotation.x = this.i
 
 		this.material.onBeforeCompile = (shader) => {
 			// console.log(shader.vertexShader)
