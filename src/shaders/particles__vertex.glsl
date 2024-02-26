@@ -1,5 +1,9 @@
 uniform float uTime;
 varying vec3 vPosition;
+varying vec3 vColor;
+varying vec3 vCameraPosition;
+varying float vSize;
+
 
 float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
 vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
@@ -10,6 +14,7 @@ float noise(vec3 p){
     vec3 d = p - a;
     d = d * d * (3.0 - 2.0 * d);
 
+    vColor = color;
     vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
     vec4 k1 = perm(b.xyxy);
     vec4 k2 = perm(k1.xyxy + b.zzww);
@@ -32,14 +37,18 @@ void main() {
 
   float l = length(position);
 
-  mvPosition.x += sin(uTime * 0.3 + l) * 10.;
-  mvPosition.y += cos(uTime * 0.3 + l) * 10.;
-  mvPosition.z += cos(uTime * 0.3 + l) * 10.;
+  mvPosition.x += sin(uTime * 0.3 + l) * 5.;
+  mvPosition.y += cos(uTime * 0.3 + l) * 5.;
+  mvPosition.z += cos(uTime * 0.3 + l) * 5.;
 
   vPosition = vec4(modelMatrix * mvPosition).xyz;
+  vCameraPosition = cameraPosition;
 
   mvPosition = modelViewMatrix * mvPosition;
   gl_Position = projectionMatrix * mvPosition;
 
-  gl_PointSize = 4. + noise(vPosition) * 10.;
+  vSize = smoothstep(0.,200.,length(vPosition - vCameraPosition)) * noise(vPosition);
+
+  gl_PointSize = 30. * (vSize);
+  gl_PointSize *= 0.5;
 }

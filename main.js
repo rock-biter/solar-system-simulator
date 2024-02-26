@@ -203,8 +203,16 @@ scene.add(backgroundInstanced)
 
 // universe particles
 const particlesCount = 15000
-const positionArray = new Float32Array(particlesCount * 3)
-const position = new THREE.BufferAttribute(positionArray, 3)
+const position = new THREE.BufferAttribute(
+	new Float32Array(particlesCount * 3),
+	3
+)
+const color = new THREE.BufferAttribute(new Float32Array(particlesCount * 3), 3)
+const colors = [
+	[1, 1, 0.3],
+	[1, 0.2, 0.3],
+	[0.3, 0.2, 0.9],
+]
 
 const particleGeometry = new THREE.BufferGeometry()
 for (let i = 0; i < particlesCount; i++) {
@@ -217,10 +225,15 @@ for (let i = 0; i < particlesCount; i++) {
 		y += Math.sin(x * 0.01) * 25 + Math.cos(z * 0.01) * 25
 	}
 
+	const col = colors[Math.floor(Math.random() * colors.length)]
+
+	color.setXYZ(i, ...col)
 	position.setXYZ(i, x, y, z)
 }
 position.needsUpdate = true
+color.needsUpdate = true
 particleGeometry.setAttribute('position', position)
+particleGeometry.setAttribute('color', color)
 
 const particlesMaterial = new THREE.ShaderMaterial({
 	vertexColors: true,

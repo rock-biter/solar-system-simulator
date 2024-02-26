@@ -1,5 +1,8 @@
 uniform float uTime;
 varying vec3 vPosition;
+varying vec3 vColor;
+varying vec3 vCameraPosition;
+varying float vSize;
 
 float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
 vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
@@ -33,5 +36,5 @@ void main()
     // strength *= 2.0;
     strength = smoothstep(0.7,0.8,1.0 - strength);
     float n = noise(vec3(uTime * 0.0005 + length(vPosition))) * 0.5 + 0.5;
-		gl_FragColor = vec4(vec3(0.8,0.5,0.9) * n,strength) * (n) * 0.5;
+		gl_FragColor = vec4(mix(mix(vec3(0.8,0.5,0.9),vColor,0.5),vec3(1.),0.3) * n,strength) * (n) * (1.1 - pow(vSize,2.) );
 }
