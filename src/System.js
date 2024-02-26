@@ -118,7 +118,11 @@ export default class System extends Object3D {
 	}
 
 	deleteEntity(entity) {
-		this.setSelected(entity)
+		if (this.head instanceof Planet) {
+			this.setSelected(this.head)
+		} else {
+			this.setSelected(entity)
+		}
 		const i = this.entities.indexOf(entity)
 		if (i >= 0) this.entities.splice(i)
 

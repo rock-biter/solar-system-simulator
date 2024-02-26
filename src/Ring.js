@@ -34,7 +34,12 @@ export default class Ring extends Object3D {
 
 	type = 'ring'
 
-	constructor(innerRadius, outerRadius, i = 0, r = 0) {
+	constructor(
+		innerRadius,
+		outerRadius,
+		i = Math.random() * Math.PI * 0.1,
+		r = 0
+	) {
 		super()
 
 		this.innerRadius = innerRadius
