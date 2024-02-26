@@ -143,8 +143,26 @@ body {
 	align-items: center; */
 }
 
-.lil-gui.root .title {
+.lil-gui.root > .title {
 	display: none;
+}
+
+.lil-gui.root .title {
+	border: none !important;
+	text-transform: uppercase;
+	@apply text-indigo-500 text-sm;
+}
+
+.lil-gui .children .lil-gui .children {
+	padding: 0;
+}
+
+.lil-gui.root .title::before {
+	display: none;
+}
+
+.lil-gui.root .children > .lil-gui {
+	display: block !important;
 }
 
 .lil-gui.root .title,

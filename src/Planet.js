@@ -1,5 +1,12 @@
-import { Color, IcosahedronGeometry, Mesh, MeshStandardMaterial } from 'three'
+import {
+	Color,
+	IcosahedronGeometry,
+	Mesh,
+	MeshStandardMaterial,
+	SphereGeometry,
+} from 'three'
 import Body from './Body'
+import Atmosphere from './Atmosphere'
 
 const GEOMETRY = new IcosahedronGeometry(1, 1)
 
@@ -14,6 +21,7 @@ export default class Planet extends Body {
 		const material = new MeshStandardMaterial({
 			color: new Color(Math.random() * 0xffffff),
 			flatShading: true,
+			opacity: 0.5,
 		})
 
 		const mesh = new Mesh(geometry, material)
@@ -26,5 +34,23 @@ export default class Planet extends Body {
 
 		this.name =
 			'P' + (Math.random() * 1000).toString(16).slice(0, 3).toUpperCase()
+
+		this.addAtmosphere()
+	}
+
+	addAtmosphere() {
+		const atmo = new Atmosphere(this.radius * 1.3, this)
+		this.atmo = atmo
+		this.add(atmo)
+	}
+
+	initGUI() {
+		super.initGUI()
+
+		if (this.atmo) {
+			const folder = this.gui.addFolder('Atmosphere')
+			folder.open()
+			this.atmo.initGUI(folder)
+		}
 	}
 }

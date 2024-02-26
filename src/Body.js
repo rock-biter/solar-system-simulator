@@ -15,6 +15,13 @@ export default class Body extends Object3D {
 	spin = 5 + Math.random() * 5
 	progress = Math.random()
 
+	guiParams = {
+		radius: 'Radius',
+		name: 'Name',
+		color: 'Color',
+		spin: 'Spin',
+	}
+
 	constructor(name, system = null) {
 		super()
 		this.name = name
@@ -22,22 +29,24 @@ export default class Body extends Object3D {
 		this.time = this.offset
 	}
 
-	initGUI() {
-		this.gui = new GUI()
+	initGUI(gui) {
+		this.gui = gui || new GUI()
 		this.gui.hide()
 
-		this.gui
-			.add(this, 'name')
-			.name('Name')
-			.onChange((val) => {
-				this.updateName(val)
-			})
-
-		if (this.mesh) {
-			this.gui.addColor(this.mesh.material, 'color').name('Color')
+		if (this.guiParams.name) {
+			this.gui
+				.add(this, 'name')
+				.name(this.guiParams.name)
+				.onChange((val) => {
+					this.updateName(val)
+				})
 		}
 
-		if (this.radius) {
+		if (this.mesh && this.guiParams.color) {
+			this.gui.addColor(this.mesh.material, 'color').name(this.guiParams.color)
+		}
+
+		if (this.radius && this.guiParams.radius) {
 			let min = 0.1
 			let max = 3
 
@@ -48,14 +57,14 @@ export default class Body extends Object3D {
 
 			this.gui
 				.add(this, 'radius', min, max, 0.01)
-				.name('Radius')
+				.name(this.guiParams.radius)
 				.onChange((val) => {
 					this.updateRadius(val)
 				})
 		}
 
-		if (this.radius) {
-			this.gui.add(this, 'spin', -50, 50, 0.01).name('Spin')
+		if (this.radius && this.guiParams.spin) {
+			this.gui.add(this, 'spin', -50, 50, 0.01).name(this.guiParams.spin)
 		}
 
 		if (this.orbit) {

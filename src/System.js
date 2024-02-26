@@ -89,6 +89,9 @@ export default class System extends Object3D {
 		this.add(orbit)
 		this.onEnter(orbit.ellipse)
 		this.onEnter(entity.mesh, 0.8)
+		if (entity.atmo) {
+			this.onEnter(entity.atmo, 0.9)
+		}
 
 		select && this.setSelected(entity)
 	}

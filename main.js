@@ -131,7 +131,7 @@ controls.maxDistance = 200
 controls.minDistance = 10
 controls.enablePan = false
 
-const light = new THREE.AmbientLight(0xffffff, 0.1)
+const light = new THREE.AmbientLight(0xffffff, 0.25)
 const pointLight = new THREE.PointLight(0xffffff, 10, 300, 0.15)
 
 pointLight.position.y = 0
