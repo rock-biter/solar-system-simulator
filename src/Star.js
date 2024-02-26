@@ -12,12 +12,12 @@ export default class Star extends Body {
 		uDensity: { value: 0.2 },
 		uBase: { value: 0.5 },
 		uPow: { value: 7.8 },
-		utime: { value: 0 },
+		uTime: { value: 0 },
 	}
 
 	constructor(radius = 1, name = '') {
 		const geometry = new IcosahedronGeometry(1, 10)
-		const material = new MeshBasicMaterial({ color: 'yellow' })
+		const material = new MeshBasicMaterial({ color: 'orange' })
 
 		const mesh = new Mesh(geometry, material)
 		super(name)
@@ -49,5 +49,10 @@ export default class Star extends Body {
 			folder.open()
 			this.atmo.initGUI(folder)
 		}
+	}
+
+	update(dt) {
+		// console.log('star update', dt)
+		this.uniforms.uTime.value += dt
 	}
 }

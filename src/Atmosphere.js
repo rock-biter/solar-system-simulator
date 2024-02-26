@@ -17,7 +17,7 @@ export default class Atmosphere extends Body {
 		uDensity: { value: 0.25 * Math.random() },
 		uBase: { value: 0.3 + Math.random() * 0.3 },
 		uPow: { value: 4 + Math.random() * 4 },
-		utime: { value: 0 },
+		uTime: { value: 0 },
 	}
 
 	guiParams = {
