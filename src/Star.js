@@ -54,5 +54,7 @@ export default class Star extends Body {
 	update(dt) {
 		// console.log('star update', dt)
 		this.uniforms.uTime.value += dt
+
+		super.update(dt)
 	}
 }

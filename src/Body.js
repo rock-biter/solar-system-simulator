@@ -13,6 +13,7 @@ export default class Body extends Object3D {
 	mesh = null
 	speed = 1
 	spin = 5 + Math.random() * 5
+	spinScalar = 1
 	progress = Math.random()
 
 	guiParams = {
@@ -107,7 +108,7 @@ export default class Body extends Object3D {
 		// time += this.offset
 		// const dt = time - this.time
 		this.time += dt * this.speed
-		this.mesh.rotation.y += dt * Math.PI * 2 * this.spin
+		this.mesh.rotation.y += dt * Math.PI * 2 * this.spin * this.spinScalar
 
 		if (this.orbit) {
 			const progress = dt % this.orbit.period
