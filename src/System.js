@@ -45,6 +45,7 @@ export default class System extends Object3D {
 	}
 
 	addRing(select = true) {
+		this.plusRingButton.remove()
 		let lastOrbit = this.getLastOrbit()
 
 		const ring = new Ring(lastOrbit + 0.5, this.orbitGap)
@@ -181,7 +182,6 @@ export default class System extends Object3D {
 			this.plusRingButton.addEventListener('click', (e) => {
 				e.stopPropagation()
 				this.addRing()
-				this.plusRingButton.remove()
 			})
 		}
 
