@@ -45,6 +45,7 @@ export default class Atmosphere extends Body {
 			side: BackSide,
 		})
 		const mesh = new Mesh(this.geometry, this.material)
+		mesh.renderOrder = 1000
 
 		this.guiParams = {
 			...this.guiParams,

@@ -9,7 +9,7 @@ import Atmosphere from './Atmosphere'
 
 export default class Star extends Body {
 	uniforms = {
-		uDensity: { value: 0.3 },
+		uDensity: { value: 0.2 },
 		uBase: { value: 0.5 },
 		uPow: { value: 7.8 },
 		utime: { value: 0 },

@@ -1,5 +1,6 @@
 import GUI from 'lil-gui'
 import {
+	AdditiveBlending,
 	DoubleSide,
 	Mesh,
 	MeshStandardMaterial,
@@ -45,6 +46,7 @@ export default class Ring extends Object3D {
 			color: Math.random() * 0xffffff,
 			side: DoubleSide,
 			transparent: true,
+			// blending: AdditiveBlending,
 		})
 
 		this.mesh = new Mesh(this.geometry, this.material)
