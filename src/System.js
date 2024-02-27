@@ -264,6 +264,7 @@ export default class System extends Object3D {
 
 		if (focus) {
 			focus.gui?.hide()
+			gsap.to(focus, { spinScalar: 1, duration: 0.4 })
 			if (focus.orbit) {
 				focus.orbit.ellipse.material.color.set(0xffffff)
 				focus.orbit.ellipse.material.opacity = 0.25
@@ -275,7 +276,7 @@ export default class System extends Object3D {
 		if (focus === entity) {
 			this.camera.focusBody = null
 			gsap.to(this.camera, { worldSpeed: 0.025, duration: 0.4 })
-			gsap.to(entity, { spinScalar: 1, duration: 0.4 })
+
 			gsap.to(this.camera.position, { x: 0, y: 15, z: 25, duration: 1 })
 			return
 		}
